@@ -139,4 +139,6 @@ const data = [
         price: 7200,
         image: 'https://example.com/images/lightweight-ice-axe.jpg'
     }
-]
+];
+
+export default data;
