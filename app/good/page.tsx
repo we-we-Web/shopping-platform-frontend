@@ -6,6 +6,7 @@ function Good() {
             <p>description</p>
             <p>price</p>
             <p>image</p>
+            <p>review</p>
         </section>
     )
 }
