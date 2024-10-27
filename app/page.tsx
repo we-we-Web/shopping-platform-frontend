@@ -1,6 +1,8 @@
+'use client'
+
 import React from 'react';
 import data from './good/data';
-
+import Link from 'next/link';
 // 顯示星等函數
 const getStarRating = (rating: number) => {
     const filledStars = Math.floor(rating);
@@ -26,12 +28,38 @@ const getStarRating = (rating: number) => {
     );
 };
 
+interface Product {
+  title: string;
+  categories: string;
+  description: string;
+  price: number;
+  image: string;
+  rating: number;
+  discount?: number;
+}
+
+function connectToProductPage(good: Product) {
+  // const value = document.querySelector('.text').value
+  localStorage.setItem('title', good.title);
+  localStorage.setItem('categories', good.categories);
+  localStorage.setItem('description', good.description);
+  localStorage.setItem('price', good.price.toString());
+  localStorage.setItem('image', good.image);
+  localStorage.setItem('rating', good.rating.toString());
+  localStorage.setItem('review', good.rating.toString());
+  // alert(good);
+};
+
+
 function Home() {
     return (
         <div className="p-6">
             <h1 className="text-2xl font-bold mb-6">商品列表</h1>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {data.map((product, index) => (
+                  <Link href="product-page" id= {`product-link ${index}`}
+                      onClick={() => connectToProductPage(product)}
+                  >
                     <div
                         key={index}
                         className="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300"
@@ -71,6 +99,7 @@ function Home() {
                             )}
                         </div>
                     </div>
+                  </Link>
                 ))}
             </div>
         </div>
