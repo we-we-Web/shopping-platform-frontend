@@ -10,7 +10,7 @@ const ProductDetailPage: React.FC = () => {
         Array.isArray(product.image) ? product.image[0] : product.image || '/default-image.png'
     );
 
-    const { title, categories, description, price, image, review } = product;
+    const { title, categories, description, price, image, rating: rating } = product;
 
     return (
         <div className="product-detail-page" style={{ display: 'flex', gap: '20px', padding: '20px' }}>
@@ -82,7 +82,7 @@ const ProductDetailPage: React.FC = () => {
                 <p style={{ fontSize: '1em', color: '#555' }}>Categories: {categories}</p>
                 <p style={{ fontSize: '1em', color: '#333', marginTop: '10px' }}>{description}</p>
                 <p style={{ fontSize: '1.2em', color: '#e60023', fontWeight: 'bold', marginTop: '10px' }}>Price: ${price}</p>
-                <p style={{ fontSize: '1em', color: '#555' }}>Review: {review}</p>
+                <p style={{ fontSize: '1em', color: '#555' }}>Review: {rating}</p>
                 <div className="purchase-options" style={{ marginTop: '15px' }}>
                     <label htmlFor="quantity" style={{ fontSize: '1em', color: '#555' }}>Quantity:</label>
                     <input type="number" id="quantity" name="quantity" min="1" max="10" style={{ marginLeft: '10px', padding: '5px' }} />

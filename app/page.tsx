@@ -1,5 +1,5 @@
 import React from 'react';
-import data from './good/data'; // 你的商品資料
+import data from './good/data';
 
 // 顯示星等函數
 const getStarRating = (rating: number) => {
@@ -44,19 +44,29 @@ function Home() {
                         <div className="p-4">
                             <h2 className="text-lg font-bold">{product.title}</h2>
                             <p className="text-gray-500">{product.categories}</p>
-                            <p className="text-red-500 font-bold mt-2">
-                                {product.price}元
-                            </p>
-                            {product.discount && (
-                                <p className="text-green-500 text-sm mt-1">
-                                    {product.discount}
+                            {!product.discount && (
+                                <p className="text-black font-bold text-xl mt-2">
+                                    {product.price}元
                                 </p>
                             )}
+                            {product.discount && (
+                                <div className="mt-1">
+                                    <p className="text-gray-500 line-through text-xl">
+                                        {product.price}元
+                                    </p>
+                                    <p className="text-red-500 font-bold text-xl">
+                                        {product.price - product.discount}元
+                                        <span className="text-red-500 text-x1 ml-2">
+                                            {product.discount}% off
+                                        </span>
+                                    </p>
+                                </div>
+                            )}
                             {/* 顯示評價星等 */}
-                            {product.review && (
+                            {product.rating && (
                                 <div className="mt-2">
-                                    {getStarRating(product.review)}
-                                    <p className="text-sm text-gray-500 mt-1">{product.review} / 5</p>
+                                    {getStarRating(product.rating)}
+                                    <p className="text-sm text-gray-500 mt-1">{product.rating} / 5</p>
                                 </div>
                             )}
                         </div>
