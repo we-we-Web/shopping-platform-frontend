@@ -1,98 +1,24 @@
-"use client";
+const product = 
+    {
+        title: '斜跨包',
+        categories: 'bag',
+        description: ' 【ARC\'TERYX / アークテリクス】\nカナダのアウトドアブランド。ブランド名は、恐竜と鳥類をつなぐ始祖鳥、アーキオプテリクス・リトグラフィカに由来。進化を加速することで、アウトドアにおける人間の進歩の推進に役立つということを象徴している。始祖鳥は、アークテリクスのブランドロゴにもなっている。\n高性能の登山者用ウェアを発売し、人気となる。素材にゴアテックスなど、機能性の高いものを使用。クライミングに特化したウェアや、ハイキングアイテム、スキーウェア、トレイルランニングウェアなど、それぞれのアクティビティに対応したアイテムを揃える。都会的なデザインによってアウトドア用ではなく、ファッションとしてもアークテリクスのウェアやバッグ、アクセサリーなどが人気。',
+        price: 8470,
+        image: 'https://images.daytona-park.com/items/original/1063044900196/1063044900196-_16.jpg'
+    };
 
-import React, { useState } from 'react';
-import data from '../good/data'; // 假設這是您的商品資料文件
-
-const ProductDetailPage: React.FC = () => {
-    // 假設展示 `data` 中的第一個商品，並確保有預設圖片
-    const product = data[0] || {};
-    const [selectedImage, setSelectedImage] = useState<string>(
-        Array.isArray(product.image) ? product.image[0] : product.image || '/default-image.png'
-    );
-
-    const { title, categories, description, price, image, review } = product;
-
+export default function detailProduct(){
     return (
-        <div className="product-detail-page" style={{ display: 'flex', gap: '20px', padding: '20px' }}>
-            {/* 圖片展示區 */}
-            <div className="product-images">
-                {Array.isArray(image) ? (
-                    image.map((imgSrc: string, index: number) => (
-                        <div key={index} style={{ position: 'relative', overflow: 'hidden', borderRadius: '10px', width: '100px', height: '100px' }}>
-                            <img
-                                src={imgSrc}
-                                alt={`Product Image ${index + 1}`}
-                                style={{ width: '100%', height: '100%', cursor: 'pointer', transition: 'transform 0.3s' }}
-                                onClick={() => setSelectedImage(imgSrc)}
-                            />
-                            <div
-                                style={{
-                                    position: 'absolute',
-                                    top: 0,
-                                    left: 0,
-                                    width: '100%',
-                                    height: '100%',
-                                    backgroundImage: `url(${imgSrc})`,
-                                    backgroundSize: '200%',
-                                    backgroundPosition: 'center',
-                                    pointerEvents: 'none',
-                                    transform: 'scale(0)',
-                                    transition: 'transform 0.3s',
-                                }}
-                                className="zoom-lens"
-                            />
-                        </div>
-                    ))
-                ) : (
-                    <div style={{ position: 'relative', overflow: 'hidden', borderRadius: '10px', width: '100px', height: '100px' }}>
-                        <img
-                            src={image || '/default-image.png'}
-                            alt="Product Image"
-                            style={{ width: '100%', height: '100%', transition: 'transform 0.3s' }}
-                        />
-                        <div
-                            style={{
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                width: '100%',
-                                height: '100%',
-                                backgroundImage: `url(${image || '/default-image.png'})`,
-                                backgroundSize: '200%',
-                                backgroundPosition: 'center',
-                                pointerEvents: 'none',
-                                transform: 'scale(0)',
-                                transition: 'transform 0.3s',
-                            }}
-                            className="zoom-lens"
-                        />
-                    </div>
-                )}
-                {selectedImage && (
-                    <div className="main-image" style={{ marginTop: '10px' }}>
-                        <img src={selectedImage} alt="Selected Product" style={{ width: '300px', height: 'auto' }} />
-                    </div>
-                )}
+        <div className="flex h-[100%] w-[100%] items-center pt-[10vh]">
+            <div className="flex-col basis-1/2 pl-[15vw]">
+                <img src={product.image} className="h-[70vh] rounded-lg"/>
             </div>
-
-
-            {/* 商品資訊區 */}
-            <div className="product-info" style={{ flex: '1', padding: '15px', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', backgroundColor: '#fff' }}>
-                <h1 style={{ fontSize: '1.5em', marginBottom: '10px' }}>{title}</h1>
-                <p style={{ fontSize: '1em', color: '#555' }}>Categories: {categories}</p>
-                <p style={{ fontSize: '1em', color: '#333', marginTop: '10px' }}>{description}</p>
-                <p style={{ fontSize: '1.2em', color: '#e60023', fontWeight: 'bold', marginTop: '10px' }}>Price: ${price}</p>
-                <p style={{ fontSize: '1em', color: '#555' }}>Review: {review}</p>
-                <div className="purchase-options" style={{ marginTop: '15px' }}>
-                    <label htmlFor="quantity" style={{ fontSize: '1em', color: '#555' }}>Quantity:</label>
-                    <input type="number" id="quantity" name="quantity" min="1" max="10" style={{ marginLeft: '10px', padding: '5px' }} />
-                    <button style={{ display: 'block', marginTop: '15px', padding: '10px 20px', backgroundColor: '#e60023', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
-                        Add to Cart
-                    </button>
-                </div>
+            <div className="flex-col basis-1/2 pr-[10vw]">
+                <h1 className="text-[4em] font-bold">{product.title}</h1>
+                <div className="text-[3em] text-red-700 font-bold">{product.price} <span className="text-[0.5em]">yen</span> </div>
+                <div>{product.description}</div>
+                <button className="bg-red-700 w-[10em] h-[2em] text-white mt-[5em] ml-[3em] hover:opacity-60">add to cart</button>
             </div>
         </div>
     );
-};
-
-export default ProductDetailPage;
+}
