@@ -57,12 +57,12 @@ function Home() {
             <h1 className="text-2xl font-bold mb-6">商品列表</h1>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {data.map((product, index) => (
-                  <Link href="product-page" id= {`product-link ${index}`}
+                  <Link href="product-page" id={`product-link ${index}`} key={index}
                       onClick={() => connectToProductPage(product)}
                   >
                     <div
                         key={index}
-                        className="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300"
+                        className="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300 border-2 border-slate-400"
                     >
                         <img
                             src={product.image || '/default-image.png'}
