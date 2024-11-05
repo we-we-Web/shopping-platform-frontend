@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser as faUserRegular } from '@fortawesome/free-regular-svg-icons';
 
 // 顯示星等函數
-const getStarRating = (rating) => {
+function getStarRating(rating: number) {
     const filledStars = Math.floor(rating);
     const halfStar = rating - filledStars >= 0.5 ? 1 : 0;
     const emptyStars = 5 - filledStars - halfStar;
@@ -31,7 +31,10 @@ const getStarRating = (rating) => {
     );
 };
 
-const LoginPopup = ({ onClose }) => {
+interface LoginPopupProps {
+    onClose: () => void;
+}
+function LoginPopup({ onClose }: LoginPopupProps) {
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div className="bg-white p-8 rounded-lg w-80 shadow-lg">
@@ -72,7 +75,11 @@ function Home() {
                 </button>
             </div>
 
-            {isLoginOpen && <LoginPopup onClose={() => setLoginOpen(false)} />}
+            { isLoginOpen && 
+                <LoginPopup 
+                    onClose={ () => setLoginOpen(false) }
+                />
+            }
 
             <h1 className="text-2xl font-bold mb-6">商品列表</h1>
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
