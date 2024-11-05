@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import data from './good/data';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -35,23 +35,28 @@ interface LoginPopupProps {
     onClose: () => void;
 }
 function LoginPopup({ onClose }: LoginPopupProps) {
+    const handleClickOutside = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        if (event.target === event.currentTarget) {
+            onClose();
+        }
+    };
+
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" onClick={handleClickOutside}>
             <div className="bg-white p-8 rounded-lg w-80 shadow-lg">
                 <h2 className="text-2xl font-bold mb-4">登入</h2>
-                <form>
-                    <div className="mb-4">
-                        <label className="block text-gray-700">Email</label>
-                        <input type="email" className="w-full border border-gray-300 p-2 rounded" />
-                    </div>
-                    <div className="mb-6">
-                        <label className="block text-gray-700">密碼</label>
-                        <input type="password" className="w-full border border-gray-300 p-2 rounded" />
-                    </div>
-                    <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
-                        登入
+                <div className="mt-4 text-center">
+                    <button
+                        type="button"
+                        className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600"
+                        onClick={() => {
+                            // Google login logic here
+                            window.location.href = 'https://accounts.google.com/o/oauth2/auth';
+                        }}
+                    >
+                        使用 Google 帳號登入
                     </button>
-                </form>
+                </div>
                 <button onClick={onClose} className="mt-4 text-gray-500 hover:text-gray-700 w-full text-center">
                     關閉
                 </button>
@@ -62,6 +67,14 @@ function LoginPopup({ onClose }: LoginPopupProps) {
 
 function Home() {
     const [isLoginOpen, setLoginOpen] = useState(false);
+
+    useEffect(() => {
+        if (isLoginOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+    }, [isLoginOpen]);
 
     return (
         <div className="p-6 relative">
