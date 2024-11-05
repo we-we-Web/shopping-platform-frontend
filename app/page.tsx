@@ -5,7 +5,33 @@ import data from './good/data';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser as faUserRegular } from '@fortawesome/free-regular-svg-icons';
+import { GoogleLogin, GoogleOAuthProvider, CredentialResponse } from '@react-oauth/google';
+import './login.css'; // 引入 CSS 檔案
 
+const LoginRegister: React.FC = () => {
+    
+    return (
+        <GoogleOAuthProvider clientId="YOUR_CLIENT_ID">
+            <div id="signup-login-page">
+                <div className="emotion-css-cache-178yklu">
+                    <div className="emotion-css-cache-gmuwbf">
+                        <div className="chakra-stack emotion-css-cache-he6z7n">
+                            <GoogleLogin
+                                onSuccess={(credentialResponse: CredentialResponse) => {
+                                    console.log(credentialResponse);
+                                }}
+                                onError={() => {
+                                    console.log('Login Failed');
+                                }}
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </GoogleOAuthProvider>
+    );
+}
+export { LoginRegister };
 // 顯示星等函數
 function getStarRating(rating: number) {
     const filledStars = Math.floor(rating);
@@ -43,23 +69,15 @@ function LoginPopup({ onClose }: LoginPopupProps) {
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" onClick={handleClickOutside}>
-            <div className="bg-white p-8 rounded-lg w-80 shadow-lg">
-                <h2 className="text-2xl font-bold mb-4">登入</h2>
-                <div className="mt-4 text-center">
-                    <button
-                        type="button"
-                        className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600"
-                        onClick={() => {
-                            // Google login logic here
-                            window.location.href = 'https://accounts.google.com/o/oauth2/auth';
-                        }}
-                    >
-                        使用 Google 帳號登入
-                    </button>
-                </div>
-                <button onClick={onClose} className="mt-4 text-gray-500 hover:text-gray-700 w-full text-center">
-                    關閉
-                </button>
+            <div className="flex gap-4 items-center flex-col sm:flex-row">
+                <a className="NavigationBar-actionMenu-button nav-color" onClick={() => setLoginOpen(true)}>
+                    <svg className="icons icon-member" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                    </svg>
+                    <span data-nosnippet="">
+                        會員登入
+                    </span>
+                </a>
             </div>
         </div>
     );
@@ -88,9 +106,9 @@ function Home() {
                 </button>
             </div>
 
-            { isLoginOpen && 
-                <LoginPopup 
-                    onClose={ () => setLoginOpen(false) }
+            {isLoginOpen &&
+                <LoginPopup
+                    onClose={() => setLoginOpen(false)}
                 />
             }
 
@@ -99,7 +117,7 @@ function Home() {
                 {data.map((product, index) => (
                     <Link href="product-page" key={index}>
                         <div
-                            onClick={() => connectToProductPage(product)}
+                            onClick={() => console.log('Connecting to product page:', product)}
                             className="flex flex-col bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300 border border-slate-300 min-h-[300px] h-full cursor-pointer"
                         >
                             <img
@@ -143,4 +161,4 @@ function Home() {
     );
 }
 
-export default Home;
+export { Home };
