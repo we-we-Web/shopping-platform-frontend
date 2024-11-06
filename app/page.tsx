@@ -6,32 +6,32 @@ import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser as faUserRegular } from '@fortawesome/free-regular-svg-icons';
 import { GoogleLogin, GoogleOAuthProvider, CredentialResponse } from '@react-oauth/google';
-import './login.css'; // 引入 CSS 檔案
+
 
 const LoginRegister: React.FC = () => {
-    
     return (
-        <GoogleOAuthProvider clientId="YOUR_CLIENT_ID">
-            <div id="signup-login-page">
-                <div className="emotion-css-cache-178yklu">
-                    <div className="emotion-css-cache-gmuwbf">
-                        <div className="chakra-stack emotion-css-cache-he6z7n">
-                            <GoogleLogin
-                                onSuccess={(credentialResponse: CredentialResponse) => {
-                                    console.log(credentialResponse);
-                                }}
-                                onError={() => {
-                                    console.log('Login Failed');
-                                }}
-                            />
-                        </div>
+        <GoogleOAuthProvider clientId="242403448980-4japuuckr49kb7flht7t2sgiiqq4ffoe.apps.googleusercontent.com">
+            <div className="flex flex-col items-center justify-center">
+                <div className="mt-4">
+                    <div className="flex gap-2">
+                        <GoogleLogin
+                            onSuccess={(credentialResponse: CredentialResponse) => {
+                                console.log(credentialResponse);
+                                
+                            }}
+                            onError={() => {
+                                console.log('Login Failed');
+                            }}
+                        />
                     </div>
                 </div>
             </div>
         </GoogleOAuthProvider>
     );
 }
+
 export { LoginRegister };
+
 // 顯示星等函數
 function getStarRating(rating: number) {
     const filledStars = Math.floor(rating);
@@ -67,17 +67,20 @@ function LoginPopup({ onClose }: LoginPopupProps) {
         }
     };
 
+    function setLoginOpen(arg0: boolean): void {
+        throw new Error('Function not implemented.');
+    }
+
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" onClick={handleClickOutside}>
-            <div className="flex gap-4 items-center flex-col sm:flex-row">
-                <a className="NavigationBar-actionMenu-button nav-color" onClick={() => setLoginOpen(true)}>
-                    <svg className="icons icon-member" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                    </svg>
-                    <span data-nosnippet="">
-                        會員登入
-                    </span>
-                </a>
+            <div className="bg-white p-8 rounded-lg w-80 shadow-lg">
+                <h2 className="text-2xl font-bold mb-4">登入</h2>
+                <div className="mt-4 text-center">
+                    <LoginRegister />
+                </div>
+                <button onClick={onClose} className="mt-4 text-gray-500 hover:text-gray-700 w-full text-center">
+                    關閉
+                </button>
             </div>
         </div>
     );
@@ -161,4 +164,4 @@ function Home() {
     );
 }
 
-export { Home };
+export default Home;
