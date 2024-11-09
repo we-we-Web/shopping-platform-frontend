@@ -119,9 +119,10 @@ function Home() {
             <div className="absolute top-6 right-8">
                 <button
                     onClick={() => setLoginOpen(true)}
-                    className="flex items-center bg-gray-200 p-1.5 rounded-full hover:bg-gray-300"
+                    className="flex items-center p-1.5 rounded-full hover:bg-black hover:text-white"
+                    style={{ border: '2px solid black' }}
                 >
-                    <FontAwesomeIcon icon={faUserRegular} className="text-gray-600 text-2xl" />
+                    <FontAwesomeIcon icon={faUserRegular} className="text-2xl" />
                 </button>
             </div>
 
