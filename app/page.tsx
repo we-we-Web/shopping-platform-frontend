@@ -1,8 +1,8 @@
-'use client';
-
-import React, { useState, useEffect } from 'react';
+'use client'
 import data from './good/data';
 import Link from 'next/link';
+import React, { Children, useEffect, useState } from 'react';
+import ProductCard from './component/ProductCard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser as faUserRegular } from '@fortawesome/free-regular-svg-icons';
 import { GoogleLogin, GoogleOAuthProvider, CredentialResponse } from '@react-oauth/google';
@@ -48,6 +48,7 @@ const LoginRegister: React.FC = () => {
 
 export { LoginRegister };
 
+  
 // 顯示星等函數
 function getStarRating(rating: number) {
     const filledStars = Math.floor(rating);
@@ -102,7 +103,23 @@ function LoginPopup({ onClose }: LoginPopupProps) {
     );
 };
 
+// const [data1, setData] = useState();
+
 function Home() {
+    // useEffect(() => {
+    //     const fetchData = async() => {
+    //         try {
+    //             const url = 'https://dongyi.hnd1.zeabur.app/products';
+    //             const response = await fetch(url);
+    //             const result = await response.json();
+    //             const newData = result; // 直接使用 result
+    //             console.log(newData);
+    //         } catch (error) {
+    //             console.error("Error fetching data:", error);
+    //         }
+    //     };
+    //     fetchData();
+    // }, [data]);
     const [isLoginOpen, setLoginOpen] = useState(false);
 
     useEffect(() => {

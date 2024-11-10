@@ -2,15 +2,6 @@
 
 import React, { useEffect, useState } from 'react';
 
-// const product = 
-//     {
-//         title: localStorage.getItem('title'),
-//         categories: localStorage.getItem('categories'),
-//         description: localStorage.getItem('description'),
-//         price: localStorage.getItem('price'),
-//         image: localStorage.getItem('image') || '/default-image.png'
-//     };
-
 const getProductFromLocalStorage = () => {
     if (typeof window !== 'undefined') {
         return {
