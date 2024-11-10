@@ -1,18 +1,7 @@
-
-interface Product{
-    title: string;
-    categories: string;
-    description: string;
-    price: number;
-    image: string;
-    rating: number;
-    discount?: number;
-}
+import Product from "../model/product";
 
 interface ProductCardProps {
-
     product: Product;
-  
 }
 
 const getStarRating = (rating: number) => {
