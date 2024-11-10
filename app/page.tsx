@@ -1,101 +1,201 @@
-import Image from "next/image";
+'use client'
+import data from './good/data';
+import Link from 'next/link';
+import React, { Children, useEffect, useState } from 'react';
+import ProductCard from './component/ProductCard';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser as faUserRegular } from '@fortawesome/free-regular-svg-icons';
+import { GoogleLogin, GoogleOAuthProvider, CredentialResponse } from '@react-oauth/google';
 
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+function LoginRegister() {
+    const handleLoginSuccess = async (credentialResponse: CredentialResponse) => {
+        try {
+            const response = await fetch('/api/callback', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ credential: credentialResponse.credential }),
+            });
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+            if (response.ok) {
+                console.log('Login successful');
+            } else {
+                console.log('Login failed');
+            }
+        } catch (error) {
+            console.error('Error during login', error);
+        }
+    };
+
+    return (
+        <GoogleOAuthProvider clientId="242403448980-4japuuckr49kb7flht7t2sgiiqq4ffoe.apps.googleusercontent.com">
+            <div className="flex flex-col items-center justify-center">
+                <div className="mt-4">
+                    <div className="flex gap-2">
+                        <GoogleLogin
+                            onSuccess={handleLoginSuccess}
+                            onError={() => {
+                                console.log('Login Failed');
+                            }}
+                        />
+                    </div>
+                </div>
+            </div>
+        </GoogleOAuthProvider>
+    );
 }
+
+export { LoginRegister };
+
+  
+// 顯示星等函數
+function getStarRating(rating: number) {
+    const filledStars = Math.floor(rating);
+    const halfStar = rating - filledStars >= 0.5 ? 1 : 0;
+    const emptyStars = 5 - filledStars - halfStar;
+
+    return (
+        <div className="flex items-center">
+            {[...Array(filledStars)].map((_, index) => (
+                <span key={`filled-${index}`} className="text-yellow-400 text-lg">
+                    ★
+                </span>
+            ))}
+            {halfStar === 1 && (
+                <span className="text-yellow-400 text-lg">☆</span>
+            )}
+            {[...Array(emptyStars)].map((_, index) => (
+                <span key={`empty-${index}`} className="text-gray-300 text-lg">
+                    ☆
+                </span>
+            ))}
+        </div>
+    );
+};
+
+interface LoginPopupProps {
+    onClose: () => void;
+}
+function LoginPopup({ onClose }: LoginPopupProps) {
+    const handleClickOutside = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        if (event.target === event.currentTarget) {
+            onClose();
+        }
+    };
+
+    function setLoginOpen(arg0: boolean): void {
+        throw new Error('Function not implemented.');
+    }
+
+    return (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" onClick={handleClickOutside}>
+            <div className="bg-white p-8 rounded-lg w-80 shadow-lg">
+                <h2 className="text-2xl font-bold mb-4">登入</h2>
+                <div className="mt-4 text-center">
+                    <LoginRegister />
+                </div>
+                <button onClick={onClose} className="mt-4 text-gray-500 hover:text-gray-700 w-full text-center">
+                    關閉
+                </button>
+            </div>
+        </div>
+    );
+};
+
+// const [data1, setData] = useState();
+
+function Home() {
+    // useEffect(() => {
+    //     const fetchData = async() => {
+    //         try {
+    //             const url = 'https://dongyi.hnd1.zeabur.app/products';
+    //             const response = await fetch(url);
+    //             const result = await response.json();
+    //             const newData = result; // 直接使用 result
+    //             console.log(newData);
+    //         } catch (error) {
+    //             console.error("Error fetching data:", error);
+    //         }
+    //     };
+    //     fetchData();
+    // }, [data]);
+    const [isLoginOpen, setLoginOpen] = useState(false);
+
+    useEffect(() => {
+        if (isLoginOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+    }, [isLoginOpen]);
+
+    return (
+        <div className="p-6 relative">
+            {/* Profile button to open login popup */}
+            <div className="absolute top-6 right-8">
+                <button
+                    onClick={() => setLoginOpen(true)}
+                    className="flex items-center p-1.5 rounded-full hover:opacity-70"
+                    style={{ border: '2px solid black' }}
+                >
+                    <FontAwesomeIcon icon={faUserRegular} className="text-2xl" />
+                </button>
+            </div>
+
+            {isLoginOpen &&
+                <LoginPopup
+                    onClose={() => setLoginOpen(false)}
+                />
+            }
+
+            <h1 className="text-2xl font-bold mb-6">商品列表</h1>
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+                {data.map((product, index) => (
+                    <Link href="product-page" key={index}>
+                        <div
+                            onClick={() => localStorage.setItem('product', JSON.stringify(product))}
+                            className="flex flex-col bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300 border border-slate-300 min-h-[300px] h-full cursor-pointer"
+                        >
+                            <img
+                                src={product.image || '/default-image.png'}
+                                alt={product.title}
+                                className="w-full h-56 object-cover"
+                            />
+                            <div className="p-4 flex flex-col justify-between flex-grow">
+                                <h2 className="text-lg font-bold">{product.title}</h2>
+                                <p className="text-gray-500">{product.categories}</p>
+                                {!product.discount ? (
+                                    <p className="text-black font-bold text-xl mt-2">
+                                        {product.price}元
+                                    </p>
+                                ) : (
+                                    <div className="mt-1">
+                                        <p className="text-gray-500 line-through text-xl">
+                                            {product.price}元
+                                        </p>
+                                        <p className="text-red-500 font-bold text-xl">
+                                            {(product.price * (1 - product.discount / 100)).toFixed(2)}元
+                                            <span className="text-red-500 text-sm ml-2">
+                                                {product.discount}% off
+                                            </span>
+                                        </p>
+                                    </div>
+                                )}
+                                {/* 顯示評價星等 */}
+                                {product.rating && (
+                                    <div className="mt-2">
+                                        {getStarRating(product.rating)}
+                                        <p className="text-sm text-gray-500 mt-1">{product.rating} / 5</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </Link>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+export default Home;
