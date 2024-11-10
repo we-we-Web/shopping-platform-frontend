@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser as faUserRegular } from '@fortawesome/free-regular-svg-icons';
 import { GoogleLogin, GoogleOAuthProvider, CredentialResponse } from '@react-oauth/google';
 
-const LoginRegister: React.FC = () => {
+function LoginRegister() {
     const handleLoginSuccess = async (credentialResponse: CredentialResponse) => {
         try {
             const response = await fetch('/api/callback', {
@@ -154,7 +154,7 @@ function Home() {
                 {data.map((product, index) => (
                     <Link href="product-page" key={index}>
                         <div
-                            onClick={() => console.log('Connecting to product page:', product)}
+                            onClick={() => localStorage.setItem('product', JSON.stringify(product))}
                             className="flex flex-col bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300 border border-slate-300 min-h-[300px] h-full cursor-pointer"
                         >
                             <img

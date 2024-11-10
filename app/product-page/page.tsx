@@ -1,32 +1,38 @@
 'use client'
 
 import React, { useEffect, useState } from 'react';
+import Product from '../model/product';
 
-const getProductFromLocalStorage = () => {
-    if (typeof window !== 'undefined') {
-        return {
-            title: localStorage.getItem('title') || '預設標題',
-            categories: localStorage.getItem('categories') || '預設分類',
-            description: localStorage.getItem('description') || '預設描述',
-            price: localStorage.getItem('price') || '預設價格',
-            image: localStorage.getItem('image') || '/default-image.png'
-        };
-    }
-    return {
-        title: '預設標題',
-        categories: '預設分類',
-        description: '預設描述',
-        price: '預設價格',
-        image: '/default-image.png'
-    };
-};
+// const getProductFromLocalStorage = () => {
+//     if (typeof window !== 'undefined') {
+//         return {
+//             title: localStorage.getItem('title') || '預設標題',
+//             categories: localStorage.getItem('categories') || '預設分類',
+//             description: localStorage.getItem('description') || '預設描述',
+//             price: localStorage.getItem('price') || '預設價格',
+//             image: localStorage.getItem('image') || '/default-image.png'
+//         };
+//     }
+//     return {
+//         title: '預設標題',
+//         categories: '預設分類',
+//         description: '預設描述',
+//         price: '預設價格',
+//         image: '/default-image.png'
+//     };
+// };
 
 export default function detailProduct(){
-    const [product, setProduct] = useState(getProductFromLocalStorage());
+    const [product, setProduct] = useState<Product | null>(null);
 
     useEffect(() => {
-        setProduct(getProductFromLocalStorage());
+        const storedProduct = localStorage.getItem("product");
+        if (storedProduct) {
+            setProduct(JSON.parse(storedProduct));
+        }
     }, []);
+
+    if (!product) return <p>Loading...</p>;
     return (
         <div className="flex h-[100%] w-[100%] items-center pt-[10vh]">
             <div className="flex-col basis-1/2 pl-[15vw]">
