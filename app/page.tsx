@@ -3,9 +3,6 @@ import data from './good/data';
 import Link from 'next/link';
 import React, { Children, useEffect, useState } from 'react';
 import ProductCard from './component/ProductCard';
-import React, { useState, useEffect } from 'react';
-import data from './good/data';
-import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser as faUserRegular } from '@fortawesome/free-regular-svg-icons';
 import { GoogleLogin, GoogleOAuthProvider, CredentialResponse } from '@react-oauth/google';
@@ -155,12 +152,6 @@ function Home() {
             <h1 className="text-2xl font-bold mb-6">商品列表</h1>
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
                 {data.map((product, index) => (
-                  <Link href="product-page" id= {`product-link ${index}`}
-                      onClick={() => connectToProductPage(product)}
-                      key={index}
-                  >
-                    <ProductCard product={product} />
-                  </Link>
                     <Link href="product-page" key={index}>
                         <div
                             onClick={() => console.log('Connecting to product page:', product)}
