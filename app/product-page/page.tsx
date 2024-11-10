@@ -22,7 +22,7 @@ import Product from '../model/product';
 //     };
 // };
 
-export default function detailProduct(){
+export default function ProductContent(){
     const [product, setProduct] = useState<Product | null>(null);
 
     useEffect(() => {
