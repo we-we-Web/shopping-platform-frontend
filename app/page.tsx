@@ -1,8 +1,7 @@
 'use client'
 import data from './good/data';
 import Link from 'next/link';
-import React, { Children, useEffect, useState } from 'react';
-import ProductCard from './component/ProductCard';
+import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser as faUserRegular } from '@fortawesome/free-regular-svg-icons';
 import { GoogleLogin, GoogleOAuthProvider, CredentialResponse } from '@react-oauth/google';
@@ -45,9 +44,6 @@ function LoginRegister() {
         </GoogleOAuthProvider>
     );
 }
-
-export { LoginRegister };
-
   
 // 顯示星等函數
 function getStarRating(rating: number) {
@@ -84,9 +80,9 @@ function LoginPopup({ onClose }: LoginPopupProps) {
         }
     };
 
-    function setLoginOpen(arg0: boolean): void {
-        throw new Error('Function not implemented.');
-    }
+    // function setLoginOpen(arg0: boolean): void {
+    //     throw new Error('Function not implemented.');
+    // }
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" onClick={handleClickOutside}>

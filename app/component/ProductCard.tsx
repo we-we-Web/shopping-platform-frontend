@@ -29,7 +29,7 @@ const getStarRating = (rating: number) => {
 };
 
 export default function ProductCard({ product }: ProductCardProps) {
-    const { title, categories, description, price, image, rating, discount } = product;
+    // const { title, categories, description, price, image, rating, discount } = product;
     return (
         <div
         className="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300"
