@@ -145,6 +145,17 @@ function Home() {
                 />
             }
 
+            <div className="absolute top-6 right-20">
+                <Link href="cart-page">
+                    <button
+                        className="flex items-center p-1.5 rounded-full hover:opacity-70"
+                        style={{ border: '2px solid black' }}
+                    >
+                        購物車
+                    </button>
+                </Link>
+            </div>
+
             <h1 className="text-2xl font-bold mb-6">商品列表</h1>
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
                 {data.map((product, index) => (
