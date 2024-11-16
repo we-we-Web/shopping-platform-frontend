@@ -29,11 +29,6 @@ export default function CartPage() {
         }
     }, []);
 
-    // ** 每次購物車變更時存儲到 local storage **
-    useEffect(() => {
-        localStorage.setItem('cartList', JSON.stringify(cart));
-    }, [cart]);
-
     // 增加或減少商品數量
     const updateQuantity = (productId: number, delta: number) => {
         setCart(

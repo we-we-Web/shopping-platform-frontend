@@ -3,25 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import Product from '../model/product';
 
-// const getProductFromLocalStorage = () => {
-//     if (typeof window !== 'undefined') {
-//         return {
-//             title: localStorage.getItem('title') || '預設標題',
-//             categories: localStorage.getItem('categories') || '預設分類',
-//             description: localStorage.getItem('description') || '預設描述',
-//             price: localStorage.getItem('price') || '預設價格',
-//             image: localStorage.getItem('image') || '/default-image.png'
-//         };
-//     }
-//     return {
-//         title: '預設標題',
-//         categories: '預設分類',
-//         description: '預設描述',
-//         price: '預設價格',
-//         image: '/default-image.png'
-//     };
-// };
-
 
 export default function ProductContent(){
     const [product, setProduct] = useState<Product | null>(null);
@@ -30,7 +11,7 @@ export default function ProductContent(){
         const storedProduct = localStorage.getItem("product");
         if (storedProduct) {
             setProduct(JSON.parse(storedProduct));
-            localStorage.setItem("product", "");
+            // localStorage.setItem("product", "");
             
         }
     }, []);
@@ -38,11 +19,10 @@ export default function ProductContent(){
     const addtoCart = () => {
         // localStorage.removeItem("cartList");
         let arr = [];
-        if(localStorage.getItem("cartList") == null){
+        if (localStorage.getItem("cartList") == null) {
             arr.push(product);
             localStorage.setItem("cartList", JSON.stringify(arr));
-        }
-        else{
+        } else {
             const cardList = localStorage.getItem("cartList");
             arr = cardList ? JSON.parse(cardList) : [];
             arr.push(product);
