@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import Product from '../model/product';
+import { useRouter } from 'next/navigation';
+import { SlActionUndo } from "react-icons/sl";
 
 // const getProductFromLocalStorage = () => {
 //     if (typeof window !== 'undefined') {
@@ -21,9 +23,10 @@ import Product from '../model/product';
 //         image: '/default-image.png'
 //     };
 // };
-
+// 
 export default function ProductContent(){
     const [product, setProduct] = useState<Product | null>(null);
+    const router = useRouter();
 
     useEffect(() => {
         const storedProduct = localStorage.getItem("product");
@@ -35,7 +38,12 @@ export default function ProductContent(){
     if (!product) return <p>Loading...</p>;
     return (
         <div className="flex h-[100%] w-[100%] items-center pt-[10vh]">
-            <div className="flex-col basis-1/2 pl-[15vw]">
+            <div className="fixed top-10 left-10">
+                <button type="button" onClick={()=>router.back()} className="hover:opacity-70">
+                    <SlActionUndo size={40}/>
+                </button>
+            </div>
+            <div className="flex-col basis-1/2 pl-[15vw] pr-[2vw]">
                 <img src={product.image} className="h-[70vh] rounded-lg"/>
             </div>
             <div className="flex-col basis-1/2 pr-[10vw]">
