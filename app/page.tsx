@@ -1,46 +1,55 @@
 'use client'
-import data from './good/data';
+// import data from './good/data';
 import React, { useEffect, useState } from 'react';
 import ProductCard from './component/ProductCard';
 import CartButton from './component/CartButton';
 import LoginPopup from './component/LoginPopup';
 import LoginButton from './component/LoginButton';
-
-// const [data1, setData] = useState();
+import Product from './model/product';
 
 function Home() {
-    // useEffect(() => {
-    //     const fetchData = async() => {
-    //         try {
-    //             const url = 'https://dongyi.hnd1.zeabur.app/products';
-    //             const response = await fetch(url);
-    //             const result = await response.json();
-    //             const newData = result; // 直接使用 result
-    //             console.log(newData);
-    //         } catch (error) {
-    //             console.error("Error fetching data:", error);
-    //         }
-    //     };
-    //     fetchData();
-    // }, [data]);
+    const [data, setData] = useState<Product[]>([]); // 將初始值設為 null
+    const [isLoading, setLoading] = useState(true); // 新增 loading 狀態
     const [isLoginOpen, setLoginOpen] = useState(false);
 
     useEffect(() => {
-        if (isLoginOpen) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = 'auto';
-        }
+        const fetchData = async () => {
+            try {
+                const url = 'https://dongyi-api.hnd1.zeabur.app/products';
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const result = await response.json();
+                setData(result); // 將結果儲存到狀態中
+            } catch (err) {
+                console.error("Error fetching data:", err);
+            } finally {
+                setLoading(false); // 結束加載狀態
+            }
+        };
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        document.body.style.overflow = isLoginOpen ? 'hidden' : 'auto';
     }, [isLoginOpen]);
+
+    // 在渲染前檢查 data 和 isLoading
+    if (isLoading) {
+        return <div className="p-6">Loading...</div>; // 加載提示
+    }
+
+    if (!data) {
+        return <div className="p-6">無法獲取資料，請稍後再試。</div>; // 當 data 為 null 時的提示
+    }
 
     return (
         <div className="p-6 relative">
             <LoginButton onOpen={() => setLoginOpen(true)} />
 
             {isLoginOpen &&
-                <LoginPopup
-                    onClose={() => setLoginOpen(false)}
-                />
+                <LoginPopup onClose={() => setLoginOpen(false)} />
             }
 
             <CartButton />

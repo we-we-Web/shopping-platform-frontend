@@ -38,12 +38,12 @@ export default function ProductCard({ product }: ProductCardProps, key: number) 
             className="flex flex-col bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300 border border-slate-300 min-h-[300px] h-full cursor-pointer"
         >
             <img
-                src={product.image || '/default-image.png'}
-                alt={product.title}
+                src={product.image || 'https://drive.google.com/file/d/12EX3cQT58i84ZLmJMUrcGDASODBztdG-/view?usp=sharing'}
+                alt={product.name}
                 className="w-full h-56 object-cover"
             />
             <div className="p-4 flex flex-col justify-between flex-grow">
-                <h2 className="text-lg font-bold">{product.title}</h2>
+                <h2 className="text-lg font-bold">{product.name}</h2>
                 <p className="text-gray-500">{product.categories}</p>
                 {!product.discount ? (
                     <p className="text-black font-bold text-xl mt-2">

@@ -38,7 +38,7 @@ export default function ProductContent(){
                 <img src={product.image} className="h-[70vh] rounded-lg"/>
             </div>
             <div className="flex-col basis-1/2 pr-[10vw]">
-                <h1 className="text-[4em] font-bold">{product.title}</h1>
+                <h1 className="text-[4em] font-bold">{product.name}</h1>
                 <div className="text-[3em] text-red-700 font-bold">{product.price} <span className="text-[0.5em]">元</span> </div>
                 <div>{product.description}</div>
                 <button className="bg-red-700 w-[10em] h-[2em] text-white mt-[5em] ml-[3em] hover:opacity-60" onClick={addtoCart}>add to cart</button>
