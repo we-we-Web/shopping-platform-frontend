@@ -29,7 +29,7 @@ function Home() {
             }
         };
         fetchData();
-    }, []);
+    }, [data]);
 
     useEffect(() => {
         document.body.style.overflow = isLoginOpen ? 'hidden' : 'auto';
