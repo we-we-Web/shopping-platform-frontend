@@ -35,7 +35,7 @@ export default function ProductContent(){
     return (
         <div className="flex h-[100%] w-[100%] items-center pt-[10vh]">
             <div className="flex-col basis-1/2 pl-[15vw]">
-                <img src={product.image} className="h-[70vh] rounded-lg"/>
+                <img src={product.image || "./default.png"} className="h-[70vh] rounded-lg"/>
             </div>
             <div className="flex-col basis-1/2 pr-[10vw]">
                 <h1 className="text-[4em] font-bold">{product.name}</h1>

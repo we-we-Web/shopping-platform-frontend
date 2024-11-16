@@ -38,7 +38,7 @@ export default function ProductCard({ product }: ProductCardProps, key: number) 
             className="flex flex-col bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300 border border-slate-300 min-h-[300px] h-full cursor-pointer"
         >
             <img
-                src={product.image || 'https://drive.google.com/file/d/12EX3cQT58i84ZLmJMUrcGDASODBztdG-/view?usp=sharing'}
+                src={product.image || './default.png'}
                 alt={product.name}
                 className="w-full h-56 object-cover"
             />
