@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Product from "../model/product";
 
 interface ProductCardProps {
@@ -28,46 +29,48 @@ const getStarRating = (rating: number) => {
     );
 };
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({ product }: ProductCardProps, key: number) {
     // const { title, categories, description, price, image, rating, discount } = product;
     return (
+        <Link href="product-page" key={key}>
         <div
-        className="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300"
+            onClick={() => localStorage.setItem('product', JSON.stringify(product))}
+            className="flex flex-col bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300 border border-slate-300 min-h-[300px] h-full cursor-pointer"
         >
-        <img
-            src={product.image || '/default-image.png'}
-            alt={product.title}
-            className="w-full h-56 object-cover"
+            <img
+                src={product.image || 'https://drive.google.com/file/d/12EX3cQT58i84ZLmJMUrcGDASODBztdG-/view?usp=sharing'}
+                alt={product.name}
+                className="w-full h-56 object-cover"
             />
-        <div className="p-4">
-            <h2 className="text-lg font-bold">{product.title}</h2>
-            <p className="text-gray-500">{product.categories}</p>
-            {!product.discount && (
-                <p className="text-black font-bold text-xl mt-2">
-                    {product.price}元
-                </p>
-            )}
-            {product.discount && (
-                <div className="mt-1">
-                    <p className="text-gray-500 line-through text-xl">
+            <div className="p-4 flex flex-col justify-between flex-grow">
+                <h2 className="text-lg font-bold">{product.name}</h2>
+                <p className="text-gray-500">{product.categories}</p>
+                {!product.discount ? (
+                    <p className="text-black font-bold text-xl mt-2">
                         {product.price}元
                     </p>
-                    <p className="text-red-500 font-bold text-xl">
-                        {product.price - product.discount}元
-                        <span className="text-red-500 text-x1 ml-2">
-                            {product.discount}% off
-                        </span>
-                    </p>
-                </div>
-            )}
-            {/* 顯示評價星等 */}
-            {product.rating && (
-                <div className="mt-2">
-                    {getStarRating(product.rating)}
-                    <p className="text-sm text-gray-500 mt-1">{product.rating} / 5</p>
-                </div>
-            )}
+                ) : (
+                    <div className="mt-1">
+                        <p className="text-gray-500 line-through text-xl">
+                            {product.price}元
+                        </p>
+                        <p className="text-red-500 font-bold text-xl">
+                            {(product.price * (1 - product.discount / 100)).toFixed(2)}元
+                            <span className="text-red-500 text-sm ml-2">
+                                {product.discount}% off
+                            </span>
+                        </p>
+                    </div>
+                )}
+                {/* 顯示評價星等 */}
+                {product.rating && (
+                    <div className="mt-2">
+                        {getStarRating(product.rating)}
+                        <p className="text-sm text-gray-500 mt-1">{product.rating} / 5</p>
+                    </div>
+                )}
+            </div>
         </div>
-    </div>
+    </Link>
     );
 };
