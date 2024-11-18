@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react';
-import Product from '../model/product';
+import Product from '../app/model/product';
 import { useRouter } from 'next/navigation';
 import { SlActionUndo } from 'react-icons/sl';
 

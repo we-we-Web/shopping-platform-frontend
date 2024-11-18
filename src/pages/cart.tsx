@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation'; // 使用 Next.js 的 useRouter 進行路由導航
+import '../globals.css';
 
 // 定義購物車商品的型別
 interface CartItem {
