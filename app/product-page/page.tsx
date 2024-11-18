@@ -13,18 +13,16 @@ export default function ProductContent(){
         const storedProduct = localStorage.getItem("product");
         if (storedProduct) {
             setProduct(JSON.parse(storedProduct));
-            // localStorage.setItem("product", "");
-            
         }
     }, []);
-    useEffect(()=>{
-        if(product?.title){
-            document.title = product.title;
+
+    useEffect(() => {
+        if(product?.name){
+            document.title = product.name;
         }
     }, [product]);
     
     const addtoCart = () => {
-        // localStorage.removeItem("cartList");
         let arr = [];
         if (localStorage.getItem("cartList") == null) {
             arr.push(product);
