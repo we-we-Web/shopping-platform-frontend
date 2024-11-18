@@ -32,7 +32,7 @@ const getStarRating = (rating: number) => {
 export default function ProductCard({ product }: ProductCardProps, key: number) {
     // const { title, categories, description, price, image, rating, discount } = product;
     return (
-        <Link href="product-page" key={key}>
+        <Link href="product" key={key}>
         <div
             onClick={() => localStorage.setItem('product', JSON.stringify(product))}
             className="flex flex-col bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300 border border-slate-300 min-h-[300px] h-full cursor-pointer"
