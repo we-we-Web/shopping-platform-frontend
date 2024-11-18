@@ -1,11 +1,15 @@
 interface Product {
-    title: string;
-    categories: string;
-    description: string;
-    price: number;
-    image: string;
-    rating: number;
-    discount?: number;
+    id: number
+    name: string
+    price: number
+    color: string
+    size: string
+    remain_amount: number
+    image?: string
+    description?: string
+    discount?: number
+    categories?: string
+    rating?: number
 }
 
 export default Product;
