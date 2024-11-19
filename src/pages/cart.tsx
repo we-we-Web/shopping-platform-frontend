@@ -3,11 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation'; // 使用 Next.js 的 useRouter 進行路由導航
 import '../globals.css';
-
+import Link from 'next/link';
 // 定義購物車商品的型別
 interface CartItem {
     id: number;
-    title: string;
+    name: string;
     price: number;
     quantity: number;
     isChecked: boolean;
@@ -66,6 +66,8 @@ export default function CartPage() {
     // 移除商品
     const removeFromCart = (productId: number) => {
         setCart(cart.filter((item) => item.id !== productId));
+        localStorage.setItem('cartList', JSON.stringify(cart));
+        // localStorage.removeItem('cartList');
     };
 
     // 使用折價券
@@ -102,9 +104,11 @@ export default function CartPage() {
                                         checked={item.isChecked}
                                         onChange={() => toggleCheckout(item.id)}
                                     />
-                                    <span title={item.title}> {/* 顯示完整商品名稱 */}
-                                        {item.title} - NT${item.price} x {item.quantity}
-                                    </span>
+                                    <Link href="product" onClick={() => localStorage.setItem('product', JSON.stringify(item))}>
+                                        <span title={item.name}> {/* 顯示完整商品名稱 */}
+                                            {item.name} - NT${item.price} x {item.quantity}
+                                        </span>
+                                    </Link>
                                 </div>
                                 <div className="flex space-x-2">
                                     <button
