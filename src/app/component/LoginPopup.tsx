@@ -1,9 +1,6 @@
 import LoginRegister from "./LoginRegister";
 
-interface LoginPopupProps {
-    onClose: () => void;
-}
-function LoginPopup({ onClose }: LoginPopupProps) {
+function LoginPopup({ onClose }: { onClose: () => void }) {
     const handleClickOutside = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         if (event.target === event.currentTarget) {
             onClose();
@@ -17,7 +14,9 @@ function LoginPopup({ onClose }: LoginPopupProps) {
                 <div className="mt-4 text-center">
                     <LoginRegister onClose={onClose}/>
                 </div>
-                <button onClick={onClose} className="mt-4 text-gray-500 hover:text-gray-700 w-full text-center">
+                <button 
+                    onClick={onClose} 
+                    className="mt-4 text-gray-500 hover:text-gray-700 w-full text-center">
                     關閉
                 </button>
             </div>
