@@ -33,11 +33,11 @@ function LoginButton() {
         <div className="absolute top-6 right-8">
             <button
                 onClick={() => setLoginOpen(true)}
-                className="flex items-center p-1.5 rounded-full hover:opacity-70"
+                className="flex items-center rounded-full hover:opacity-70"
                 style={{ border: '2px solid black' }}
             >
-                { profile ? <img src={profile.picture} alt="Profile Picture" /> :
-                    <FontAwesomeIcon icon={faUserRegular} className="text-2xl" />
+                { profile ? <img src={profile.picture} alt="Profile Picture" className="w-9 rounded-full" /> :
+                    <FontAwesomeIcon icon={faUserRegular} className="text-2xl m-1.5" />
                 }
             </button>
 
