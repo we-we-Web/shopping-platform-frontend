@@ -6,6 +6,7 @@ import LoginPopup from '../app/component/LoginPopup';
 import LoginButton from '../app/component/LoginButton';
 import Product from '../app/model/product';
 import '../globals.css';
+import NavigationBar from '../app/component/NavigationBar';
 
 function Home() {
     const [data, setData] = useState<Product[]>([]); // 將初始值設為 null
@@ -45,22 +46,17 @@ function Home() {
     }
 
     return (
-        <div className="p-6 relative">
-            <LoginButton onOpen={() => setLoginOpen(true)} />
-
-            {isLoginOpen &&
-                <LoginPopup onClose={() => setLoginOpen(false)} />
-            }
-
-            <CartButton />
-
-            <h1 className="text-2xl font-bold mb-6">商品列表</h1>
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
-                {data.map((product, index) => (
-                    <ProductCard product={product} key={index} />
-                ))}
+        <>
+            <NavigationBar />
+            <div className="p-6 relative mt-16"> 
+                <h1 className="text-2xl font-bold mb-6">商品列表</h1>
+                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+                    {data.map((product, index) => (
+                        <ProductCard product={product} key={index} />
+                    ))}
+                </div>
             </div>
-        </div>
+        </>
     );
 }
 
