@@ -26,8 +26,16 @@ export default function CartPage() {
     useEffect(() => {
         const storedCart = localStorage.getItem('cartList');
         if (storedCart) {
-            setCart(JSON.parse(storedCart));
+            const parsedCart = JSON.parse(storedCart);
+            const updatedCart = parsedCart.map((item: CartItem) => ({
+                ...item,
+                quantity: 1,
+                isChecked: false,
+                isFavorite: false,
+            }));
+            setCart(updatedCart);
         }
+        // console.log(cart);
     }, []);
 
     // 增加或減少商品數量
@@ -66,8 +74,9 @@ export default function CartPage() {
     // 移除商品
     const removeFromCart = (productId: number) => {
         setCart(cart.filter((item) => item.id !== productId));
-        localStorage.setItem('cartList', JSON.stringify(cart));
+        // console.log(cart);
         // localStorage.removeItem('cartList');
+        localStorage.setItem('cartList', JSON.stringify(cart.filter((item) => item.id !== productId)));
     };
 
     // 使用折價券
@@ -85,6 +94,24 @@ export default function CartPage() {
             .filter((item) => item.isChecked)
             .reduce((total, item) => total + item.price * item.quantity, 0) * (1 - discount);
     };
+
+
+    // 新增訂單清單至 local storage
+    const addOrderlist = () => {    
+        let arr = [];
+        localStorage.removeItem("orderList");
+        if (localStorage.getItem("orderList") == null) {
+            arr = cart.filter((item) => item.isChecked);
+            localStorage.setItem("orderList", JSON.stringify(arr));
+        } else {
+            const orderList = localStorage.getItem("orderList");
+            arr = orderList ? JSON.parse(orderList) : [];
+            arr = arr.concat(cart.filter((item) => item.isChecked));
+            localStorage.setItem("orderList", JSON.stringify(arr));
+        }
+        // console.log(arr);
+    };
+
 
     return (
         <div className="container mx-auto p-4">
@@ -164,13 +191,15 @@ export default function CartPage() {
             <div className="checkout mt-4">
                 <h2 className="text-xl font-semibold mb-2">結算</h2>
                 <p>總金額：NT${calculateTotal().toFixed(2)}</p>
-                <button
-                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 mt-2"
-                    disabled={cart.every((item) => !item.isChecked)}
-                    onClick={() => alert('前往結帳頁面')}
-                >
-                    前往結帳
-                </button>
+                <Link href="order">
+                    <button
+                        className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 mt-2"
+                        disabled={cart.every((item) => !item.isChecked)}
+                        onClick={() => {alert('前往結帳頁面');addOrderlist();}}
+                    >
+                        前往結帳
+                    </button>
+                </Link>
             </div>
 
             <div className="mt-4">
