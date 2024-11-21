@@ -23,14 +23,17 @@ export default function ProductContent(){
     }, [product]);
     
     const addtoCart = () => {
+        // localStorage.removeItem("cartList");
         let arr = [];
         if (localStorage.getItem("cartList") == null) {
-            arr.push(product);
+            arr.push({id:product.id, quantity: 1});
             localStorage.setItem("cartList", JSON.stringify(arr));
         } else {
             const cardList = localStorage.getItem("cartList");
             arr = cardList ? JSON.parse(cardList) : [];
-            arr.push(product);
+            const existItem = arr.find(item=>item.id === product.id);
+            if(existItem) existItem.quantity += 1;
+            else arr.push({id:product.id, quantity: 1});
             localStorage.setItem("cartList", JSON.stringify(arr));
         }
         console.log(product);
