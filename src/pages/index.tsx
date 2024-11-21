@@ -5,8 +5,9 @@ import CartButton from '../app/component/CartButton';
 import LoginPopup from '../app/component/LoginPopup';
 import LoginButton from '../app/component/LoginButton';
 import Product from '../app/model/product';
-import '../globals.css';
 import NavigationBar from '../app/component/NavigationBar';
+import '../globals.css';
+
 
 function Home() {
     const [data, setData] = useState<Product[]>([]); // 將初始值設為 null

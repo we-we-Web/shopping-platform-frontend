@@ -2,11 +2,10 @@ import { useState } from 'react';
 import LoginButton from './LoginButton';
 import LoginPopup from './LoginPopup';
 import CartButton from './CartButton';
-import { useRouter } from 'next/navigation';
-import { SlActionUndo } from 'react-icons/sl';
+
 
 const NavigationBar = () => {
-  const router = useRouter();
+
   const [isLoginOpen, setLoginOpen] = useState(false);
 
   return (
@@ -26,9 +25,6 @@ const NavigationBar = () => {
       }}
     >
       {/* Logo */}
-      <button type="button" onClick={()=>router.back()} className="hover:opacity-70">
-                    <SlActionUndo size={40}/>
-                </button>
       <div style={{ display: 'flex', justifyContent: 'center', flex: 1 }}>
         <a href="/" style={{ fontSize: '24px' }}>東毅中</a>
       </div>
