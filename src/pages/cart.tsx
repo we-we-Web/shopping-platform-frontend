@@ -4,15 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation'; // 使用 Next.js 的 useRouter 進行路由導航
 import '../globals.css';
 import Link from 'next/link';
-// 定義購物車商品的型別
-interface CartItem {
-    id: number;
-    name: string;
-    price: number;
-    quantity: number;
-    isChecked: boolean;
-    isFavorite: boolean;
-}
+import { CartItem } from '../app/model/cartItem';
 
 export default function CartPage() {
     const router = useRouter();
@@ -42,7 +34,7 @@ export default function CartPage() {
     const updateQuantity = (productId: number, delta: number) => {
         setCart(
             cart.map((item) =>
-                item.id === productId
+                item.product.id === productId
                     ? { ...item, quantity: Math.max(1, item.quantity + delta) }
                     : item
             )

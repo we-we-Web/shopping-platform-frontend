@@ -10,10 +10,29 @@ export default function ProductContent(){
     const router = useRouter();
 
     useEffect(() => {
-        const storedProduct = localStorage.getItem("product");
-        if (storedProduct) {
-            setProduct(JSON.parse(storedProduct));
+        const getProduct = async(id: string) => {
+            const url = `https://dongyi-api.hnd1.zeabur.app/products/${id}`;
+            try {
+                const response = await fetch(url);
+                if (response.ok) {
+                    const result = await response.json();
+                    setProduct(result);
+                    console.log(`Get product ${id} successfully`);
+                } else {
+                    console.error('failed to fetch:', response.status);
+                }
+            } catch(err) {
+                console.error('error:', err);
+            }
         }
+        const productID = localStorage.getItem("product");
+        if (!productID) {
+            console.error("failed to get product id from local storage.");
+            // TODO
+            router.push('/');
+            return ;
+        }
+        getProduct(productID);
     }, []);
 
     useEffect(() => {
@@ -25,15 +44,24 @@ export default function ProductContent(){
     const addtoCart = () => {
         // localStorage.removeItem("cartList");
         let arr = [];
-        if (localStorage.getItem("cartList") == null) {
-            arr.push({id:product.id, quantity: 1});
+        if (!localStorage.getItem("cartList")) {
+            arr.push({
+                id: product?.id, 
+                quantity: 1
+            });
             localStorage.setItem("cartList", JSON.stringify(arr));
         } else {
             const cardList = localStorage.getItem("cartList");
             arr = cardList ? JSON.parse(cardList) : [];
             const existItem = arr.find(item=>item.id === product.id);
-            if(existItem) existItem.quantity += 1;
-            else arr.push({id:product.id, quantity: 1});
+            if (existItem) {
+                existItem.quantity += 1;
+            } else {
+                arr.push({
+                    id: product.id, 
+                    quantity: 1
+                });
+            }
             localStorage.setItem("cartList", JSON.stringify(arr));
         }
         console.log(product);
