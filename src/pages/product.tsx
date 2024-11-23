@@ -43,25 +43,15 @@ export default function ProductContent(){
     
     const addtoCart = () => {
         // localStorage.removeItem("cartList");
-        let arr = [];
-        if (!localStorage.getItem("cartList")) {
-            arr.push({
-                id: product?.id, 
-                quantity: 1
-            });
+        let arr = {};
+        if (localStorage.getItem("cartList") == null) {
+            arr[product.id] = 1;
             localStorage.setItem("cartList", JSON.stringify(arr));
         } else {
             const cardList = localStorage.getItem("cartList");
-            arr = cardList ? JSON.parse(cardList) : [];
-            const existItem = arr.find(item=>item.id === product.id);
-            if (existItem) {
-                existItem.quantity += 1;
-            } else {
-                arr.push({
-                    id: product.id, 
-                    quantity: 1
-                });
-            }
+            arr = cardList ? JSON.parse(cardList) : {};
+            if(arr.hasOwnProperty(product.id)) arr[product.id] += 1;
+            else arr[product.id] = 1;
             localStorage.setItem("cartList", JSON.stringify(arr));
         }
         console.log(product);
