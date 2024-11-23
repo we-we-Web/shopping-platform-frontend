@@ -43,18 +43,22 @@ export default function ProductContent(){
     
     const addtoCart = () => {
         // localStorage.removeItem("cartList");
-        let arr = {};
+        // let arr: { [key: string]: number } = {};
+        let arr = new Map<string,number>();
         if (localStorage.getItem("cartList") == null) {
-            arr[product.id] = 1;
+            if(product) arr.set(product.id,1);
             localStorage.setItem("cartList", JSON.stringify(arr));
         } else {
             const cardList = localStorage.getItem("cartList");
             arr = cardList ? JSON.parse(cardList) : {};
-            if(arr.hasOwnProperty(product.id)) arr[product.id] += 1;
-            else arr[product.id] = 1;
+            if(product){
+                if(arr.has(product.id)) arr.set(product.id, (arr.get(product.id) ?? 0) + 1);
+                else arr.set(product.id,1);
+            }
             localStorage.setItem("cartList", JSON.stringify(arr));
         }
-        console.log(product);
+        alert("Add to cart successfully : "+product?.name);
+        // console.log(product);
     };
 
     if (!product) return <p>Loading...</p>;

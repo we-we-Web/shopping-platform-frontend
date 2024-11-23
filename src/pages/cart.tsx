@@ -13,25 +13,41 @@ export default function CartPage() {
     const [cart, setCart] = useState<CartItem[]>([]);
     const [coupon, setCoupon] = useState('');
     const [discount, setDiscount] = useState(0);
+    const [isLoading, setLoading] = useState(true); // 新增 loading 狀態
 
     // ** 初始化時從 local storage 加載購物車資料 **
     useEffect(() => {
+        setCart([]);
         const storedCart = localStorage.getItem('cartList');
-        if (storedCart) {
-            const parsedCart = JSON.parse(storedCart);
-            const updatedCart = parsedCart.map((item: CartItem) => ({
-                ...item,
-                quantity: 1,
-                isChecked: false,
-                isFavorite: false,
-            }));
-            setCart(updatedCart);
+        const cartMap =  storedCart ? new Map<string,number>(Object.entries(JSON.parse(storedCart))) : new Map();
+        if (cartMap) {
+            cartMap.forEach((value, key) => {
+                const fetchData = async () => {
+                    try {
+                        const url = `https://dongyi-api.hnd1.zeabur.app/products/${key}`;
+                        // console.log(url);
+                        const response = await fetch(url);
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        const item = await response.json();
+                        setCart((prevCart) => [...prevCart, { product: item, quantity: value, isSelected: false }]);
+                    } catch (err) {
+                        console.error("Error fetching data:", err);
+                    } 
+                    finally {
+                        setLoading(false); // 結束加載狀態
+                    }
+                };
+                fetchData();                    
+            });
+            // console.log(cart);
         }
-        // console.log(cart);
+        // setCart(storedCart);
     }, []);
 
     // 增加或減少商品數量
-    const updateQuantity = (productId: number, delta: number) => {
+    const updateQuantity = (productId: string, delta: number) => {
         setCart(
             cart.map((item) =>
                 item.product.id === productId
@@ -42,33 +58,33 @@ export default function CartPage() {
     };
 
     // 勾選商品是否要結帳
-    const toggleCheckout = (productId: number) => {
+    const toggleCheckout = (productId: string) => {
         setCart(
             cart.map((item) =>
-                item.id === productId
-                    ? { ...item, isChecked: !item.isChecked }
+                item.product.id === productId
+                    ? { ...item, isSelected: !item.isSelected }
                     : item
             )
         );
     };
 
     // 將商品加入或移出「喜愛清單」
-    const toggleFavorite = (productId: number) => {
-        setCart(
-            cart.map((item) =>
-                item.id === productId
-                    ? { ...item, isFavorite: !item.isFavorite }
-                    : item
-            )
-        );
-    };
+    // const toggleFavorite = (productId: string) => {
+        // setCart(
+        //     cart.map((item) =>
+        //         item.product.id === productId.toString()
+        //             ? { ...item, isFavorite: !item.isFavorite }
+        //             : item
+        //     )
+        // );
+    // };
 
     // 移除商品
-    const removeFromCart = (productId: number) => {
-        setCart(cart.filter((item) => item.id !== productId));
+    const removeFromCart = (productId: string) => {
+        setCart(cart.filter((item) => item.product.id != productId.toString()));
         // console.log(cart);
         // localStorage.removeItem('cartList');
-        localStorage.setItem('cartList', JSON.stringify(cart.filter((item) => item.id !== productId)));
+        localStorage.setItem('cartList', JSON.stringify(cart.filter((item) => item.product.id !== productId)));
     };
 
     // 使用折價券
@@ -83,27 +99,30 @@ export default function CartPage() {
     // 計算總金額
     const calculateTotal = () => {
         return cart
-            .filter((item) => item.isChecked)
-            .reduce((total, item) => total + item.price * item.quantity, 0) * (1 - discount);
+            .filter((item) => item.isSelected)
+            .reduce((total, item) => total + item.product.price * item.quantity, 0) * (1 - discount);
     };
 
 
     // 新增訂單清單至 local storage
     const addOrderlist = () => {    
-        let arr = [];
+        let arr: CartItem[];
         localStorage.removeItem("orderList");
         if (localStorage.getItem("orderList") == null) {
-            arr = cart.filter((item) => item.isChecked);
+            arr = cart.filter((item) => item.isSelected);
             localStorage.setItem("orderList", JSON.stringify(arr));
         } else {
             const orderList = localStorage.getItem("orderList");
             arr = orderList ? JSON.parse(orderList) : [];
-            arr = arr.concat(cart.filter((item) => item.isChecked));
+            arr = cart.filter((item) => item.isSelected);
             localStorage.setItem("orderList", JSON.stringify(arr));
         }
         // console.log(arr);
     };
 
+    if (isLoading) {
+        return <div className="p-6">Loading...</div>; // 加載提示
+    }
 
     return (
         <div className="container mx-auto p-4">
@@ -120,39 +139,39 @@ export default function CartPage() {
                                 <div className="flex items-center space-x-2">
                                     <input
                                         type="checkbox"
-                                        checked={item.isChecked}
-                                        onChange={() => toggleCheckout(item.id)}
+                                        onChange={() => toggleCheckout(item.product.id)}
+                                        checked={item.isSelected}
                                     />
-                                    <Link href="product" onClick={() => localStorage.setItem('product', JSON.stringify(item))}>
-                                        <span title={item.name}> {/* 顯示完整商品名稱 */}
-                                            {item.name} - NT${item.price} x {item.quantity}
+                                    <Link href="product" onClick={() => localStorage.setItem('product', JSON.stringify(item.product.id))}>
+                                        <span title={item.product.name}> {/* 顯示完整商品名稱 */}
+                                            {item.product.name} - NT${item.product.price} x {item.quantity}
                                         </span>
                                     </Link>
                                 </div>
                                 <div className="flex space-x-2">
                                     <button
                                         className="bg-gray-500 text-white px-2 py-1 rounded hover:bg-gray-700"
-                                        onClick={() => updateQuantity(item.id, -1)}
+                                        onClick={() => updateQuantity(item.product.id, -1)}
                                     >
                                         -
                                     </button>
                                     <button
                                         className="bg-gray-500 text-white px-2 py-1 rounded hover:bg-gray-700"
-                                        onClick={() => updateQuantity(item.id, 1)}
+                                        onClick={() => updateQuantity(item.product.id, 1)}
                                     >
                                         +
                                     </button>
-                                    <button
+                                    {/* <button
                                         className={`px-2 py-1 rounded ${
                                             item.isFavorite ? 'bg-yellow-500' : 'bg-gray-500'
                                         } text-white hover:bg-yellow-700`}
                                         onClick={() => toggleFavorite(item.id)}
                                     >
                                         {item.isFavorite ? '移除喜愛' : '加入喜愛'}
-                                    </button>
+                                    </button> */}
                                     <button
                                         className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-700"
-                                        onClick={() => removeFromCart(item.id)}
+                                        onClick={() => removeFromCart(item.product.id)}
                                     >
                                         移除
                                     </button>
@@ -186,7 +205,7 @@ export default function CartPage() {
                 <Link href="order">
                     <button
                         className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 mt-2"
-                        disabled={cart.every((item) => !item.isChecked)}
+                        disabled={cart.every((item) => !item.isSelected)}
                         onClick={() => {alert('前往結帳頁面');addOrderlist();}}
                     >
                         前往結帳

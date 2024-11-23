@@ -4,27 +4,28 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { SlActionUndo } from 'react-icons/sl';
 import '../globals.css';
-
-interface CartItem {
-    id: number;
-    name: string;
-    price: number;
-    quantity: number;
-    isChecked: boolean;
-    isFavorite: boolean;
-}
+import { CartItem } from '../app/model/cartItem';
 
 export default function OrderPage() {
     const router = useRouter();
     const [order, setOrder] = useState<CartItem[]>([]);
 
     useEffect(() => {
-        const storedCart = localStorage.getItem('cartList');
+        const storedCart = localStorage.getItem('orderList');
         if (storedCart) {
             const parsedCart = JSON.parse(storedCart);
-            setOrder(parsedCart);
+            if (Array.isArray(parsedCart)) {
+                setOrder(parsedCart);
+            }
         }
     }, []);
+
+
+    const calculateTotal = () => {
+        return order
+            .filter((item) => item.isSelected)
+            .reduce((total, item) => total + item.product.price * item.quantity, 0);
+    };
 
     return(
         <div>
@@ -34,17 +35,29 @@ export default function OrderPage() {
                         <SlActionUndo size={40}/>
                     </button>
                 </div>
+                <div className="fixed top-20">
+                    <button
+                        className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700"
+                        onClick={() => router.push('/')}
+                    >
+                        返回首頁
+                    </button>
+                </div>
             </div>
             <div className='flex justify-center items-center'>
                 <h1>結帳</h1>
             </div>
             {order.map((item, index) => (
                 <div key={index} className='flex justify-center items-center'>
-                    <span title={item.name}>
-                        {item.name}-{item.quantity}
+                    <span title={item.product.name}>
+                        {item.product.name}-{item.quantity}
                     </span>
                 </div>
             ))}
+            <div className='flex justify-center items-center flex-col'>
+                {/* <h2 className="text-xl font-semibold mb-2">結算</h2> */}
+                <p>總金額：NT${calculateTotal().toFixed(2)}</p>
+            </div>
         </div> 
     );
 }
