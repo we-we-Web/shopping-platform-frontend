@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Product from '../app/model/product';
 import { useRouter } from 'next/navigation';
 import { SlActionUndo } from 'react-icons/sl';
+import NavigationBar from '../app/component/NavigationBar';
 
 export default function ProductContent(){
     const [product, setProduct] = useState<Product | null>(null);
@@ -38,6 +39,8 @@ export default function ProductContent(){
 
     if (!product) return <p>Loading...</p>;
     return (
+        <>
+            <NavigationBar />
         <div className="flex h-[100%] w-[100%] pt-[10vh]">
             <div className="fixed top-10 left-10">
                 <button type="button" onClick={()=>router.back()} className="hover:opacity-70">
@@ -54,5 +57,6 @@ export default function ProductContent(){
                 <button className="bg-red-700 w-[10em] h-[2em] text-white mt-[5em] ml-[3em] hover:opacity-60" onClick={addtoCart}>add to cart</button>
             </div>
         </div>
+        </>
     );
 }

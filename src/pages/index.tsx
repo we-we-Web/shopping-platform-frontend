@@ -5,6 +5,7 @@ import ProductCard from '../app/component/ProductCard';
 import CartButton from '../app/component/CartButton';
 import LoginButton from '../app/component/LoginButton';
 import Product from '../app/model/product';
+import NavigationBar from '../app/component/NavigationBar';
 import '../globals.css';
 
 
@@ -46,17 +47,17 @@ function Home() {
     }
 
     return (
-        <div className="p-6 relative">
-            <LoginButton />
-            <CartButton />
-
-            <h1 className="text-2xl font-bold mb-6">商品列表</h1>
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
-                {data.map((product, index) => (
-                    <ProductCard product={product} key={index} />
-                ))}
+        <>
+            <NavigationBar />
+            <div className="p-6 relative mt-16"> 
+                <h1 className="text-2xl font-bold mb-6">商品列表</h1>
+                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+                    {data.map((product, index) => (
+                        <ProductCard product={product} key={index} />
+                    ))}
+                </div>
             </div>
-        </div>
+        </>
     );
 }
 
