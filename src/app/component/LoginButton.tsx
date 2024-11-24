@@ -29,10 +29,18 @@ function LoginButton() {
         document.body.style.overflow = isLoginOpen ? 'hidden' : 'auto';
     }, [isLoginOpen]);
 
+    const handleLoginClick = () => {
+        if (profile) {
+            router.push('/userInterface');
+        } else {
+            setLoginOpen(true);
+        }
+    };
+
     return (
         <div className="absolute top-6 right-8">
             <button
-                onClick={() => setLoginOpen(true)}
+                onClick={handleLoginClick}
                 className="flex items-center rounded-full hover:opacity-70"
                 style={{ border: '2px solid black' }}
             >
