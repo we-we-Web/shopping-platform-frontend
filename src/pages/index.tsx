@@ -1,8 +1,8 @@
 'use client'
+
 import React, { useEffect, useState } from 'react';
 import ProductCard from '../app/component/ProductCard';
 import CartButton from '../app/component/CartButton';
-import LoginPopup from '../app/component/LoginPopup';
 import LoginButton from '../app/component/LoginButton';
 import Product from '../app/model/product';
 import NavigationBar from '../app/component/NavigationBar';
@@ -10,40 +10,40 @@ import '../globals.css';
 
 
 function Home() {
-    const [data, setData] = useState<Product[]>([]); // 將初始值設為 null
-    const [isLoading, setLoading] = useState(true); // 新增 loading 狀態
-    const [isLoginOpen, setLoginOpen] = useState(false);
+    const [data, setData] = useState<Product[]>([]);
+    const [isLoading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const url = 'https://dongyi-api.hnd1.zeabur.app/products';
+                const url = 'https://dongyi-api.hnd1.zeabur.app/product/products';
                 const response = await fetch(url);
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
                 const result = await response.json();
-                setData(result); // 將結果儲存到狀態中
+                setData(result);
             } catch (err) {
                 console.error("Error fetching data:", err);
             } finally {
-                setLoading(false); // 結束加載狀態
+                setLoading(false);
             }
         };
         fetchData();
     }, [data]);
 
-    useEffect(() => {
-        document.body.style.overflow = isLoginOpen ? 'hidden' : 'auto';
-    }, [isLoginOpen]);
-
-    // 在渲染前檢查 data 和 isLoading
     if (isLoading) {
-        return <div className="p-6">Loading...</div>; // 加載提示
+        return (
+            <div className="flex justify-center items-center">
+                <h1>
+                    Loading...
+                </h1>
+            </div>
+        )
     }
 
     if (!data) {
-        return <div className="p-6">無法獲取資料，請稍後再試。</div>; // 當 data 為 null 時的提示
+        return <div className="p-6">無法獲取資料，請稍後再試。</div>; 
     }
 
     return (
