@@ -19,7 +19,7 @@ export default function Callback() {
 
             try {
                 const response = await axios.post("https://dongyi-user.hnd1.zeabur.app/auth/callback", {
-                    access_token: code,
+                    code: code,
                 });
                 const { id_token } = response.data;
 
