@@ -16,7 +16,7 @@ export default function LoginRegister({ onClose }: {onClose: () => void}) {
         <div>
             {authUrl ? (
                 <a href={authUrl} onClick={onClose}>
-                    <button>Login with Google</button>
+                    <button style={{ border: '1px solid' }}>Login with Google</button>
                 </a>
             ) : (
                 <p>Loading...</p>
