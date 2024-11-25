@@ -4,13 +4,7 @@ import { useRouter } from 'next/router';
 const LogoutButton: React.FC = () => {
     const router = useRouter();
 
-    const handleLogout = async () => {
-
-        await fetch('https://dongyi-api.hnd1.zeabur.app/user/auth/logout', {
-            method: 'POST',
-            credentials: 'include',
-        });
-
+    const handleLogout = () => {
         localStorage.removeItem('access-token');
         router.push('/');
     };

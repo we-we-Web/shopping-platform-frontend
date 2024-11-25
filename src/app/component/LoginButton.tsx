@@ -39,7 +39,7 @@ function LoginButton() {
 
     const handleLoginClick = () => {
         if (profile) {
-            router.push('/userInterface');
+            router.push('/user');
         } else {
             setLoginOpen(true);
         }

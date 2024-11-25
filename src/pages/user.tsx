@@ -3,7 +3,7 @@ import LogoutButton from '../app/component/LogoutButton';
 import { jwtDecode } from 'jwt-decode';
 import { UserProfile } from '../app/model/userProfile';
 
-const UserInterface: React.FC = () => {
+const User: React.FC = () => {
     const [email, setEmail] = useState<string | null>(null);
 
     useEffect(() => {
@@ -26,4 +26,4 @@ const UserInterface: React.FC = () => {
     );
 };
 
-export default UserInterface;
+export default User;
