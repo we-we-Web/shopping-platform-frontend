@@ -11,7 +11,7 @@ export default function ProductContent(){
 
     useEffect(() => {
         const getProduct = async(id: string) => {
-            const url = `https://dongyi-api.hnd1.zeabur.app/products/${id}`;
+            const url = `https://dongyi-api.hnd1.zeabur.app/product/products/${id}`;
             try {
                 const response = await fetch(url);
                 if (response.ok) {
@@ -25,6 +25,7 @@ export default function ProductContent(){
                 console.error('error:', err);
             }
         }
+
         const productID = localStorage.getItem("product");
         if (!productID) {
             console.error("failed to get product id from local storage.");
@@ -41,24 +42,34 @@ export default function ProductContent(){
         }
     }, [product]);
     
-    const addtoCart = () => {
-        // localStorage.removeItem("cartList");
-        // let arr: { [key: string]: number } = {};
-        let arr = new Map<string,number>();
-        if (localStorage.getItem("cartList") == null) {
-            if(product) arr.set(product.id,1);
-            localStorage.setItem("cartList", JSON.stringify(arr));
-        } else {
-            const cardList = localStorage.getItem("cartList");
-            arr = cardList ? JSON.parse(cardList) : {};
-            if(product){
-                if(arr.has(product.id)) arr.set(product.id, (arr.get(product.id) ?? 0) + 1);
-                else arr.set(product.id,1);
-            }
-            localStorage.setItem("cartList", JSON.stringify(arr));
+    const addtoCart = async(id: string) => {
+        const url = `https://dongyi-api.hnd1.zeabur.app/cart/api/item-upd`;
+        const request = {
+            id: id,
+            product: `${product?.id}`,
+            quantity: 1,
         }
-        alert("Add to cart successfully : "+product?.name);
-        // console.log(product);
+        console.log('request body:', request);
+        try {
+            const response = await fetch(url, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(request),
+            });
+            if (response.ok) {
+                const result = await response.json();
+                console.log(result);
+                alert('upd cart item successfully');
+            } else if (response.status === 404) {
+                console.log('cart not found');
+            } else {
+                console.log('failed to upd cart:', response.status);
+            }
+        } catch (err) {
+            console.error('error:', err);
+        }
     };
 
     if (!product) return <p>Loading...</p>;
@@ -76,7 +87,11 @@ export default function ProductContent(){
                 <h1 className="text-[4em] font-bold">{product.name}</h1>
                 <div className="text-[3em] text-red-700 font-bold">{product.price} <span className="text-[0.5em]">元</span> </div>
                 <div>{product.description}</div>
-                <button className="bg-red-700 w-[10em] h-[2em] text-white mt-[5em] ml-[3em] hover:opacity-60" onClick={addtoCart}>add to cart</button>
+                <button 
+                    className="bg-red-700 w-[10em] h-[2em] text-white mt-[5em] ml-[3em] hover:opacity-60" 
+                    onClick={() => addtoCart(`demo@gmail.com`)}>
+                        add to cart
+                </button>
             </div>
         </div>
     );

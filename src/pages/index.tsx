@@ -15,7 +15,7 @@ function Home() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const url = 'https://dongyi-api.hnd1.zeabur.app/products';
+                const url = 'https://dongyi-api.hnd1.zeabur.app/product/products';
                 const response = await fetch(url);
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
