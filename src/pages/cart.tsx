@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation'; // 使用 Next.js 的 useRouter 進行路由導航
+import { useRouter } from 'next/navigation'; 
+import NavigationBar from '../app/component/NavigationBar';
 import '../globals.css';
 import Link from 'next/link';
 import { CartItem } from '../app/model/cartItem';
@@ -200,11 +201,13 @@ export default function CartPage() {
     }
 
     return (
+        <>
+            <NavigationBar />
         <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4">購物車頁面</h1>
+            <h1 className="fixed top-0 left-0 text-2xl font-bold mb-4 p-4 bg-white w-full z-10">購物車頁面</h1>
 
             <div className="cart">
-                <h2 className="text-xl font-semibold mb-2">購物車</h2>
+                <h2 className="text-xl font-semibold mb-2 p-6 relative mt-16">購物車</h2>
                 {cart.length === 0 ? (
                     <p>購物車是空的。</p>
                 ) : (
@@ -295,5 +298,6 @@ export default function CartPage() {
                 </button>
             </div>
         </div>
+        </>
     );
 }

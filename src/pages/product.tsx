@@ -4,8 +4,9 @@ import React, { useEffect, useState } from 'react';
 import Product from '../app/model/product';
 import { useRouter } from 'next/navigation';
 import { SlActionUndo } from 'react-icons/sl';
+import NavigationBar from '../app/component/NavigationBar';
 
-export default function ProductContent(){
+export default function ProductContent() {
     const [product, setProduct] = useState<Product | null>(null);
     const router = useRouter();
 
@@ -37,7 +38,7 @@ export default function ProductContent(){
     }, []);
 
     useEffect(() => {
-        if(product?.name){
+        if (product?.name) {
             document.title = product.name;
         }
     }, [product]);
