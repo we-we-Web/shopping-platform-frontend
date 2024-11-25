@@ -17,40 +17,91 @@ export default function CartPage() {
 
     // ** 初始化時從 local storage 加載購物車資料 **
     useEffect(() => {
-        setCart([]);
-        const storedCart = localStorage.getItem('cartList');
-        const cartMap =  storedCart ? new Map<string,number>(Object.entries(JSON.parse(storedCart))) : new Map();
-        if (cartMap) {
-            cartMap.forEach((value, key) => {
-                const fetchData = async () => {
-                    try {
-                        const url = `https://dongyi-api.hnd1.zeabur.app/products/${key}`;
-                        // console.log(url);
-                        const response = await fetch(url);
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! Status: ${response.status}`);
-                        }
-                        const item = await response.json();
-                        setCart((prevCart) => [...prevCart, { product: item, quantity: value, isSelected: false }]);
-                    } catch (err) {
-                        console.error("Error fetching data:", err);
-                    } 
-                    finally {
-                        setLoading(false); // 結束加載狀態
-                    }
-                };
-                fetchData();                    
-            });
-            // console.log(cart);
+        const createCart = async(id: string) => {
+            const url = `https://dongyi-api.hnd1.zeabur.app/cart/api/cart-create`;
+            const request = {
+                id: id,
+            }
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(request),
+                });
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('create cart successfully');
+                    return result;
+                } else {
+                    console.log('failed to create cart:', response.status);
+                }
+
+            } catch (err) {
+                console.error('error:', err);
+            }
         }
-        // setCart(storedCart);
+        const getCart = async(id: string) => {
+            const url = `https://dongyi-api.hnd1.zeabur.app/cart/api/cart-get`;
+            const request = {
+                id: id,
+            }
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(request),
+                });
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('get cart successfully');
+                    return await result;
+                } else if (response.status === 404) {
+                    console.log('cart not found so create the cart');
+                    const result = createCart(id);
+                    return result;
+                } else {
+                    console.log('failed to fetch cart:', response.status);
+                }
+
+            } catch (err) {
+                console.error('error:', err);
+            }
+        }
+        const setupCart = async(id: string) => {
+            interface productItemProps {
+                product: string
+                quantity: number
+            }
+            
+            const cart = await getCart(id); // 用 cart id fetch cart model
+            console.log(cart);
+
+            const cartProducts: productItemProps[] = cart.products; // set up cart products 只需要 cart model 的 products props
+            let cartItems: CartItem[] = []; // 等一下會用 product id 再去 fetch product model
+
+            cartProducts.map((product) => {
+                const item: CartItem = {
+                    product: product.product,
+                    quantity: product.quantity,
+                    isSelected: false,
+                }
+                cartItems.push(item);
+            });
+            setCart(cartItems);
+        }
+        const id = `demo@gmail.com`;
+        setupCart(id);
     }, []);
 
     // 增加或減少商品數量
     const updateQuantity = (productId: string, delta: number) => {
         setCart(
             cart.map((item) =>
-                item.product.id === productId
+                item.product === productId
                     ? { ...item, quantity: Math.max(1, item.quantity + delta) }
                     : item
             )
@@ -61,7 +112,7 @@ export default function CartPage() {
     const toggleCheckout = (productId: string) => {
         setCart(
             cart.map((item) =>
-                item.product.id === productId
+                item.product === productId
                     ? { ...item, isSelected: !item.isSelected }
                     : item
             )
@@ -81,7 +132,7 @@ export default function CartPage() {
 
     // 移除商品
     const removeFromCart = (productId: string) => {
-        setCart(cart.filter((item) => item.product.id != productId.toString()));
+        setCart(cart.filter((item) => item.product !== productId.toString()));
         // console.log(cart);
         // localStorage.removeItem('cartList');
         localStorage.setItem('cartList', JSON.stringify(cart.filter((item) => item.product.id !== productId)));
