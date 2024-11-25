@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 export default function LoginRegister({ onClose }: {onClose: () => void}) {
@@ -15,9 +16,9 @@ export default function LoginRegister({ onClose }: {onClose: () => void}) {
     return (
         <div>
             {authUrl ? (
-                <a href={authUrl} onClick={onClose}>
+                <Link href={authUrl} onClick={onClose}>
                     <button style={{ border: '1px solid' }}>Login with Google</button>
-                </a>
+                </Link>
             ) : (
                 <p>Loading...</p>
             )}

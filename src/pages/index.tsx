@@ -2,8 +2,6 @@
 
 import React, { useEffect, useState } from 'react';
 import ProductCard from '../app/component/ProductCard';
-import CartButton from '../app/component/CartButton';
-import LoginButton from '../app/component/LoginButton';
 import Product from '../app/model/product';
 import NavigationBar from '../app/component/NavigationBar';
 import '../globals.css';

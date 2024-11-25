@@ -76,13 +76,14 @@ export default function ProductContent() {
     if (!product) return <p>Loading...</p>;
     return (
         <div className="flex h-[100%] w-[100%] pt-[10vh]">
+            <NavigationBar />
             <div className="fixed top-10 left-10">
                 <button type="button" onClick={()=>router.back()} className="hover:opacity-70">
                     <SlActionUndo size={40}/>
                 </button>
             </div>
             <div className="flex-col basis-1/2 pl-[15vw]">
-                <img src={product.image || "./default.png"} className="h-[70vh] rounded-lg"/>
+                <img src={product.image || "./default.png"} className="h-96 rounded-lg object-contain"/>
             </div>
             <div className="flex-col basis-1/2 pr-[10vw]">
                 <h1 className="text-[4em] font-bold">{product.name}</h1>
