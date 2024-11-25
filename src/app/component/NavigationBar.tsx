@@ -15,7 +15,7 @@ const NavigationBar = () => {
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: '10px 20px', 
-        backgroundColor: '#fff',
+        backgroundColor: '#D3C0D6',
         borderBottom: '1px solid #eaeaea',
         position: 'fixed',
         width: '100%',
