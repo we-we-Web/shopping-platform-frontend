@@ -3,10 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import Product from '../app/model/product';
 import { useRouter } from 'next/navigation';
-import { SlActionUndo } from 'react-icons/sl';
 import NavigationBar from '../app/component/NavigationBar';
-import '../globals.css';
 import Image from 'next/image';
+import '../globals.css';
 
 export default function ProductContent() {
     const [product, setProduct] = useState<Product | null>(null);
