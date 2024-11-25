@@ -1,7 +1,7 @@
 import Product from "./product"
 
 export interface CartItem {
-    product: string
+    product: Product
     quantity: number
     isSelected: boolean
 }
