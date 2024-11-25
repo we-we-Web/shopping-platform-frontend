@@ -13,15 +13,23 @@ function LoginButton() {
     const [profile, setProfile] = useState<UserProfile | null>(null);
 
     useEffect(() => {
-        if (!id_token) {
-            console.warn("id_token 尚未載入");
-            return;
-        }
-        try {
-            const decoded: UserProfile = jwtDecode(`${id_token}`);
-            setProfile(decoded);
-        } catch (error) {
-            console.error("無效的 JWT:", error);
+        const token = localStorage.getItem('access-token');
+        if (token) {
+            try {
+                const decoded: UserProfile = jwtDecode(token);
+                setProfile(decoded);
+            } catch (error) {
+                console.error("無效的 JWT:", error);
+                localStorage.removeItem('access-token');
+            }
+        } else if (id_token) {
+            try {
+                const decoded: UserProfile = jwtDecode(`${id_token}`);
+                setProfile(decoded);
+                localStorage.setItem('access-token', `${id_token}`);
+            } catch (error) {
+                console.error("無效的 JWT:", error);
+            }
         }
     }, [id_token]);
 
@@ -29,10 +37,18 @@ function LoginButton() {
         document.body.style.overflow = isLoginOpen ? 'hidden' : 'auto';
     }, [isLoginOpen]);
 
+    const handleLoginClick = () => {
+        if (profile) {
+            router.push('/user');
+        } else {
+            setLoginOpen(true);
+        }
+    };
+
     return (
         <div className="absolute top-6 right-8">
             <button
-                onClick={() => setLoginOpen(true)}
+                onClick={handleLoginClick}
                 className="flex items-center rounded-full hover:opacity-70"
                 style={{ border: '2px solid black' }}
             >
