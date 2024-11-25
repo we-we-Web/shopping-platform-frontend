@@ -9,13 +9,11 @@ import { CartItem } from '../app/model/cartItem';
 export default function CartPage() {
     const router = useRouter();
 
-    // 購物車狀態
     const [cart, setCart] = useState<CartItem[]>([]);
     const [coupon, setCoupon] = useState('');
     const [discount, setDiscount] = useState(0);
-    const [isLoading, setLoading] = useState(true); // 新增 loading 狀態
+    const [isLoading, setLoading] = useState(true);
 
-    // ** 初始化時從 local storage 加載購物車資料 **
     useEffect(() => {
         const createCart = async(id: string) => {
             const url = `https://dongyi-api.hnd1.zeabur.app/cart/api/cart-create`;
@@ -116,17 +114,20 @@ export default function CartPage() {
         console.log('Cart updated:', cart);
     }, [cart]);
 
-    const updateQuantity = (productId: string, delta: number) => {
-        setCart(
-            cart.map((item) =>
-                item.product.id === productId
-                    ? { ...item, quantity: Math.max(1, item.quantity + delta) }
-                    : item
-            )
-        );
+    const updateQuantity = (productID: string, delta: number) => {
+        const newCart = cart.map((item) => {
+            if (item.product.id === productID) {
+                item.quantity += delta;
+                if (item.quantity <= 0) {
+                    removeFromCart(productID);
+                    return ;
+                }
+            }
+            return item;
+        }) as CartItem[];
+        setCart(newCart ?? []);
     };
 
-    // 勾選商品是否要結帳
     const toggleCheckout = (productId: string) => {
         setCart(
             cart.map((item) =>
@@ -137,7 +138,6 @@ export default function CartPage() {
         );
     };
 
-    // 移除商品
     const removeFromCart = async(productID: string) => {
         const url = `https://dongyi-api.hnd1.zeabur.app/cart/api/item-upd`;
         const id = `demo@gmail.com`;
@@ -165,19 +165,17 @@ export default function CartPage() {
         }
     };
 
-    // 使用折價券
     const applyCoupon = () => {
-        if (coupon === 'DISCOUNT10') {
+        if (coupon === 'IDME1202') {
             setDiscount(0.1); // 10% 折扣
         } else {
             alert('無效的折價券');
         }
     };
 
-    // 計算總金額
     const calculateTotal = () => {
         return cart
-            .filter((item) => item.isSelected)
+            .filter((item) => item && item.isSelected)
             .reduce((total, item) => total + item.product.price * item.quantity, 0) * (1 - discount);
     };
 
@@ -211,16 +209,19 @@ export default function CartPage() {
                     <p>購物車是空的。</p>
                 ) : (
                     <ul className='min-h-96'>
-                        {cart.map((item, index) => (
+                        {cart.map((item, index) => item && (
                             <div key={index}>
                                 <li className="flex flex-col md:flex-row justify-between items-center mb-2 mt-5">
                                     <div className="flex items-center space-x-2">
                                         <input
                                             type="checkbox"
                                             onChange={() => toggleCheckout(item.product.id)}
-                                            checked={item.isSelected}
+                                            checked={item.isSelected ?? false}
                                         />
-                                        <Link href="product" onClick={() => localStorage.setItem('product', JSON.stringify(item.product.id))}>
+                                        <Link 
+                                            href="product" 
+                                            onClick={() => localStorage.setItem('product', JSON.stringify(item.product.id))}
+                                        >
                                             <span title={item.product.name}> {/* 顯示完整商品名稱 */}
                                                 {item.product.name} - NT${item.product.price} x {item.quantity}
                                             </span>
@@ -277,7 +278,7 @@ export default function CartPage() {
                 <Link href="order">
                     <button
                         className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 mt-2"
-                        disabled={cart.every((item) => !item.isSelected)}
+                        disabled={cart.every((item) => item && !item.isSelected)}
                         onClick={() => {alert('前往結帳頁面');addOrderlist();}}
                     >
                         前往結帳
