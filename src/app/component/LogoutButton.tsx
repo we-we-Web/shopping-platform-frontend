@@ -11,6 +11,7 @@ const LogoutButton: React.FC = () => {
             credentials: 'include',
         });
 
+        localStorage.removeItem('access-token');
         router.push('/');
     };
 
