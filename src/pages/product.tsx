@@ -94,6 +94,6 @@ export default function ProductContent() {
                         add to cart
                 </button>
             </div>
-        </>
+        </div>
     );
 }
