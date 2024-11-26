@@ -50,9 +50,9 @@ export default function ProductCard({ product }: { product: Product}, key: numbe
                             <p className="text-gray-500 line-through text-xl">
                                 {product.price}元
                             </p>
-                            <p className="text-red-500 font-bold text-xl">
+                            <p className="text-[#D3C0D6] font-bold text-xl">
                                 {(product.price * (1 - product.discount / 100)).toFixed(2)}元
-                                <span className="text-red-500 text-sm ml-2">
+                                <span className="text-[#D3C0D6] text-sm ml-2">
                                     {product.discount}% off
                                 </span>
                             </p>

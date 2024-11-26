@@ -91,7 +91,7 @@ export default function ProductContent() {
                     <div className="text-[3em] text-red-700 font-bold">{product.price} <span className="text-[0.5em]">元</span> </div>
                     <div>{product.description}</div>
                     <button 
-                        className="bg-red-700 w-[10em] h-[2em] text-white mt-[5em] ml-[3em] hover:opacity-60" 
+                        className="bg-[#D3C0D6] w-[10em] h-[2em] text-white mt-[5em] ml-[3em] hover:opacity-60" 
                         onClick={() => addtoCart(`demo@gmail.com`)}>
                             add to cart
                     </button>
