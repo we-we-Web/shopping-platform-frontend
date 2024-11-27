@@ -115,18 +115,48 @@ export default function CartPage() {
         console.log('Cart updated:', cart);
     }, [cart]);
 
-    const updateQuantity = (productID: string, delta: number) => {
-        const newCart = cart.map((item) => {
+    const updateQuantity = async (productID: string, delta: number) => {
+        const updatedCart = cart.map((item) => {
             if (item.product.id === productID) {
-                item.quantity += delta;
-                if (item.quantity <= 0) {
-                    removeFromCart(productID);
-                    return;
+                const newQuantity = item.quantity + delta;
+                if (newQuantity > 0) {
+                    return { ...item, quantity: newQuantity }; // 更新數量
+                } else {
+                    return null; // 若數量為 0，標記為移除
                 }
             }
             return item;
-        }) as CartItem[];
-        setCart(newCart ?? []);
+        }).filter(Boolean) as CartItem[]; // 過濾掉被移除的商品
+
+        // 更新狀態
+        setCart(updatedCart);
+
+        // 同步到 localStorage
+        localStorage.setItem('cart', JSON.stringify(updatedCart));
+        console.log('Updated cart saved to localStorage:', updatedCart);
+
+        // 更新到後端
+        const url = `https://dongyi-api.hnd1.zeabur.app/cart/api/item-upd`;
+        const id = `demo@gmail.com`;
+        const request = {
+            id: id,
+            product: `${productID}`,
+            quantity: updatedCart.find(item => item.product.id === productID)?.quantity || 0,
+        }
+        try {
+            const response = await fetch(url, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(request),
+            });
+            if (!response.ok) {
+                console.log('failed to update cart:', response.status);
+            }
+        } catch (err) {
+            console.error('error:', err);
+        }
     };
     // 全選或取消全選商品
     const toggleSelectAll = () => {
@@ -168,6 +198,7 @@ export default function CartPage() {
             if (response.ok) {
                 setCart(cart.filter(item => item.product.id !== productID));
                 alert('remove cart successfully');
+                localStorage.setItem("cart", JSON.stringify(cart.filter(item => item.product.id !== productID)));
             } else {
                 console.log('failed to fetch cart:', response.status);
             }
@@ -218,14 +249,16 @@ export default function CartPage() {
 
                 <div className="cart">
                     <h2 className="text-xl font-semibold mb-2 p-6 relative mt-16">購物車</h2>
-                    <div className="flex items-center space-x-2">
-                        <input
-                            type="checkbox"
-                            onChange={toggleSelectAll}
-                            checked={cart.length > 0 && cart.every((item) => item.isSelected)}
-                        />
-                        <span>全選</span>
-                    </div>
+                    {cart.length > 1 && (
+                        <div className="flex items-center space-x-2">
+                            <input
+                                type="checkbox"
+                                onChange={toggleSelectAll}
+                                checked={cart.every((item) => item.isSelected)}
+                            />
+                            <span>全選</span>
+                        </div>
+                    )}
                     {cart.length === 0 ? (
                         <p>購物車是空的。</p>
                     ) : (
