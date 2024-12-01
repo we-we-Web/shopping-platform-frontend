@@ -9,6 +9,7 @@ import '../globals.css';
 
 export default function ProductContent() {
     const [product, setProduct] = useState<Product | null>(null);
+    const [productNum, setProductNum] = useState(1);
     const router = useRouter();
 
     useEffect(() => {
@@ -49,7 +50,7 @@ export default function ProductContent() {
         const request = {
             id: id,
             product: `${product?.id}`,
-            quantity: 1,
+            quantity: productNum,
         }
         console.log('request body:', request);
         try {
@@ -74,6 +75,14 @@ export default function ProductContent() {
         }
     };
 
+    const add = () => {
+        setProductNum(productNum+1);
+    }
+    const minus = () => {
+        if(productNum <= 2) setProductNum(1);
+        else setProductNum(productNum-1);
+    }
+
     if (!product) return <p>Loading...</p>;
     return (
         <div className="flex h-[100%] w-[100%] pt-[10vh]">
@@ -90,11 +99,22 @@ export default function ProductContent() {
                     <h1 className="text-[4em] font-bold">{product.name}</h1>
                     <div className="text-[3em] text-red-700 font-bold">{product.price} <span className="text-[0.5em]">元</span> </div>
                     <div>{product.description}</div>
-                    <button 
-                        className="bg-red-700 w-[10em] h-[2em] text-white mt-[5em] ml-[3em] hover:opacity-60" 
-                        onClick={() => addtoCart(`demo@gmail.com`)}>
-                            add to cart
-                    </button>
+                    <div className="flex flex-col items-center mt-5">
+                        <div className="flex items-center justify-center w-full space-x-2">
+                            <button onClick={minus} className="flex-1 bg-gray-200 hover:bg-gray-400 text-[2em]">
+                                -
+                            </button>
+                            <span className="flex-1 text-center">{productNum}</span>
+                            <button onClick={add} className="flex-1 bg-gray-200 hover:bg-gray-400 text-[2em]">
+                                +
+                            </button>
+                        </div>
+                        <button 
+                            className="bg-red-700 w-full h-[2em] text-white mt-0 hover:opacity-60" 
+                            onClick={() => addtoCart(`demo@gmail.com`)}>
+                            Add to Cart
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
