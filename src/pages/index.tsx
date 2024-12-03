@@ -1,3 +1,5 @@
+'use server'
+
 import { GetServerSideProps } from 'next';
 import ProductCard from '../app/component/ProductCard';
 import Product from '../app/model/product';
