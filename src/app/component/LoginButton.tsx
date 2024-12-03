@@ -8,7 +8,7 @@ import { UserProfile } from '../model/userProfile';
 
 function LoginButton() {
     const router = useRouter();
-    const { id_token } = router.query;
+    // const { id_token } = router.query;
     const [isLoginOpen, setLoginOpen] = useState(false);
     const [profile, setProfile] = useState<UserProfile | null>(null);
 
@@ -22,16 +22,8 @@ function LoginButton() {
                 console.error("無效的 JWT:", error);
                 localStorage.removeItem('access-token');
             }
-        } else if (id_token) {
-            try {
-                const decoded: UserProfile = jwtDecode(`${id_token}`);
-                setProfile(decoded);
-                localStorage.setItem('access-token', `${id_token}`);
-            } catch (error) {
-                console.error("無效的 JWT:", error);
-            }
         }
-    }, [id_token]);
+    }, []);
 
     useEffect(() => {
         document.body.style.overflow = isLoginOpen ? 'hidden' : 'auto';

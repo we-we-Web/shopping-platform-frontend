@@ -23,7 +23,8 @@ export default function Callback() {
                 });
                 const { id_token } = response.data;
 
-                router.push(`/?id_token=${id_token}`);
+                localStorage.setItem('access-token', `${id_token}`);
+                router.push('/');
             } catch (err) {
                 console.error("Failed to authenticate:", err);
                 setError("Failed to authenticate.");
