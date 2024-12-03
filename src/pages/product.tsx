@@ -9,6 +9,7 @@ import '../globals.css';
 
 export default function ProductContent() {
     const [product, setProduct] = useState<Product | null>(null);
+    const [productNum, setProductNum] = useState(1);
     const router = useRouter();
     const [amount, setQuantity] = useState<number>(1);
 
@@ -47,7 +48,13 @@ export default function ProductContent() {
     
     const addtoCart = async (id: string) => {
         const url = `https://dongyi-api.hnd1.zeabur.app/cart/api/item-upd`;
-    
+        const request = {
+            id: id,
+            product: `${product?.id}`,
+            delta: productNum,
+            remaining: product?.remain_amount,
+        }
+        console.log('request body:', request);
         try {
             // Step 1: 從 localStorage 獲取原本的數量
             const localCart = localStorage.getItem("cart");
@@ -97,6 +104,14 @@ export default function ProductContent() {
         }
     };    
 
+    const add = () => {
+        setProductNum(productNum+1);
+    }
+    const minus = () => {
+        if(productNum <= 2) setProductNum(1);
+        else setProductNum(productNum-1);
+    }
+
     if (!product) return <p>Loading...</p>;
     return (
         <div className="flex h-[100%] w-[100%] pt-[10vh]">
@@ -113,30 +128,22 @@ export default function ProductContent() {
                     <h1 className="text-[4em] font-bold">{product.name}</h1>
                     <div className="text-[3em] text-red-700 font-bold">{product.price} <span className="text-[0.5em]">元</span> </div>
                     <div>{product.description}</div>
-                    <div className="flex items-center mt-[2em]">
-                        <button 
-                            className="bg-gray-300 w-[2em] h-[2em] text-black hover:opacity-60" 
-                            onClick={() => setQuantity(amount > 1 ? amount - 1 : 1)}>
+                    <div className="flex flex-col items-center mt-5">
+                        <div className="flex items-center justify-center w-full space-x-2">
+                            <button onClick={minus} className="bg-gray-300 w-[2em] h-[2em] text-black hover:opacity-60">
                                 -
-                        </button>
-                        <input 
-                            type="number" 
-                            className="w-[4em] text-center mx-[1em] border border-gray-400" 
-                            value={amount} 
-                            onChange={(e) => setQuantity(Number(e.target.value))}
-                            min="1"
-                        />
-                        <button 
-                            className="bg-gray-300 w-[2em] h-[2em] text-black hover:opacity-60" 
-                            onClick={() => setQuantity(amount + 1)}>
+                            </button>
+                            <span className="flex-1 text-center">{productNum}</span>
+                            <button onClick={add} className="bg-gray-300 w-[2em] h-[2em] text-black hover:opacity-60">
                                 +
+                            </button>
+                        </div>
+                        <button 
+                            className="bg-[#9F79EE] w-[10em] h-[2em] text-white mt-[1em]  hover:opacity-60" 
+                            onClick={() => addtoCart(`demo@gmail.com`)}>
+                            Add to Cart
                         </button>
                     </div>
-                    <button 
-                        className="bg-[#9F79EE] w-[10em] h-[2em] text-white mt-[1em]  hover:opacity-60" 
-                        onClick={() => addtoCart(`demo@gmail.com`)}>
-                            add to cart
-                    </button>
                 </div>
             </div>
         </div>
