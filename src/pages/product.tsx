@@ -50,7 +50,8 @@ export default function ProductContent() {
         const request = {
             id: id,
             product: `${product?.id}`,
-            quantity: productNum,
+            delta: productNum,
+            remaining: product?.remain_amount,
         }
         console.log('request body:', request);
         try {
