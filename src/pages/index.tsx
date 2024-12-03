@@ -4,9 +4,6 @@ import Product from '../app/model/product';
 import NavigationBar from '../app/component/NavigationBar';
 import '../globals.css';
 
-interface HomeProps {
-    data: Product[];
-}
 export const getServerSideProps: GetServerSideProps = async () => {
     try {
         const url = 'https://dongyi-api.hnd1.zeabur.app/product/products';
@@ -22,7 +19,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
     }
 };
 
-const Home: React.FC<HomeProps> = ({ data }) => {
+function Home({ data } : { data: Product[] }) {
     return (
         <>
             <NavigationBar />
