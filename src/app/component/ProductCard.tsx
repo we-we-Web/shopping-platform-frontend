@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Product from "../model/product";
-
+import { useRouter } from 'next/router';
 const getStarRating = (rating: number) => {
     const filledStars = Math.floor(rating);
     const halfStar = rating - filledStars >= 0.5 ? 1 : 0;
@@ -26,11 +26,15 @@ const getStarRating = (rating: number) => {
 };
 
 export default function ProductCard({ product }: { product: Product}, key: number) {
-    
+    const router = useRouter();
+    const handleNavigate = (id: string) => {
+        router.push(`/product/?id=${id}`);
+    };
+
     return (
-        <Link href="product" key={key}>
+        // <Link href={`/product`}>
             <div
-                onClick={() => localStorage.setItem('product', product.id)}
+                onClick={() => handleNavigate(`${product.id}`)}
                 className="flex flex-col bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300 border border-slate-300 min-h-[300px] h-full cursor-pointer"
             >
                 <img
@@ -67,6 +71,6 @@ export default function ProductCard({ product }: { product: Product}, key: numbe
                     )}
                 </div>
             </div>
-        </Link>
+        //  </Link>
     );
 };

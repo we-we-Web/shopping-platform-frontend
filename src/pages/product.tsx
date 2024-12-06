@@ -2,47 +2,47 @@
 
 import React, { useEffect, useState } from 'react';
 import Product from '../app/model/product';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
 import NavigationBar from '../app/component/NavigationBar';
 import Image from 'next/image';
 import '../globals.css';
 import { GetServerSideProps } from 'next';
 
-export const getServerSideProps: GetServerSideProps = async() => {
-    const getProduct = async(id: string) => {
-        const url = `https://dongyi-api.hnd1.zeabur.app/product/products/${id}`;
-        try {
-            const response = await fetch(url);
-            if (response.ok) {
-                const product = await response.json();
-                // setProduct(result);
-                console.log(`Get product ${id} successfully`);
-                return { props: { product } };
-            } else {
-                console.error('failed to fetch:', response.status);
-            }
-        } catch(err) {
-            console.error('error:', err);
+export const getServerSideProps: GetServerSideProps = async(context) => {
+    const ProductId = context.query!;
+    // console.log('id:', id);
+    // const getProduct = async(id: string) => {
+    try {
+        const url = `https://dongyi-api.hnd1.zeabur.app/product/products/${ProductId.id}`;
+        const response = await fetch(url);
+        if (response.ok) {
+            const product: Product = await response.json();
+            console.log(`Get product ${ProductId.id} successfully`);
+            return { props: { product } };
+        } else {
+            console.error('failed to fetch:', response.status);
             return { props: {} };
         }
+    } catch(err) {
+        console.error('error:', err);
+        return { props: {} };
     }
+    // }
 
-    const productID = localStorage.getItem("product");
-    const router = useRouter();
-    if (!productID) {
-        console.error("failed to get product id from local storage.");
-        // TODO
-        router.push('/');
-        return { props: { data: [] } };
-    }
-    getProduct(productID);
-    return { props: {} };
+    // const productID = localStorage.getItem("product");
+    // const router = useRouter();
+    // if (!productID) {
+    //     console.error("failed to get product id from local storage.");
+    //     // TODO
+    //     router.push('/');
+    //     return { props: { data: [] } };
+    // }
+    // getProduct(productID);
 }
 
 export default function ProductContent({ product }: { product: Product }) {
     // const [product, setProduct] = useState<Product | null>(null);
     const [productNum, setProductNum] = useState(1);
-    
 
     useEffect(() => {
 
@@ -104,6 +104,7 @@ export default function ProductContent({ product }: { product: Product }) {
                     alt={product.name}
                     width={800}
                     height={800}
+                    priority={true}
                 />
                 <div className="flex-col basis-1/2 pr-[10vw]">
                     <h1 className="text-[4em] font-bold">{product.name}</h1>
