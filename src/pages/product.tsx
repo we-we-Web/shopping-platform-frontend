@@ -43,6 +43,8 @@ export const getServerSideProps: GetServerSideProps = async(context) => {
 export default function ProductContent({ product }: { product: Product }) {
     // const [product, setProduct] = useState<Product | null>(null);
     const [productNum, setProductNum] = useState(1);
+    const [addingBtnText, setAddingBtnText] = useState('Add to Cart');
+    const router = useRouter();
 
     useEffect(() => {
 
@@ -74,7 +76,11 @@ export default function ProductContent({ product }: { product: Product }) {
             if (response.ok) {
                 const result = await response.json();
                 console.log(result);
-                alert('upd cart item successfully');
+                setAddingBtnText('Successfully!');
+                setTimeout(() => {
+                    setAddingBtnText('Add to Cart');
+                }, 600);
+                return ;
             } else if (response.status === 404) {
                 console.log('cart not found');
             } else {
@@ -83,6 +89,10 @@ export default function ProductContent({ product }: { product: Product }) {
         } catch (err) {
             console.error('error:', err);
         }
+        setAddingBtnText('Failed...');
+        setTimeout(() => {
+            setAddingBtnText('Add to Cart');
+        }, 600);
     };
 
     const add = () => {
@@ -106,24 +116,29 @@ export default function ProductContent({ product }: { product: Product }) {
                     height={800}
                     priority={true}
                 />
-                <div className="flex-col basis-1/2 pr-[10vw]">
+                <div className="flex-col pr-[10vw]">
                     <h1 className="text-[4em] font-bold">{product.name}</h1>
-                    <div className="text-[3em] text-red-700 font-bold">{product.price} <span className="text-[0.5em]">元</span> </div>
+                    <div className="text-[3em] text-red-700 font-bold">
+                        {product.price} 
+                        <span className="text-[0.5em]">元</span> 
+                    </div>
                     <div>{product.description}</div>
-                    <div className="flex flex-col items-center mt-5">
-                        <div className="flex items-center justify-center w-full space-x-2">
-                            <button onClick={minus} className="flex-1 bg-gray-200 hover:bg-gray-400 text-[2em]">
+                    <div className="flex flex-col mt-16">
+                        <div className="flex items-center justify-center w-36 m-0">
+                            <button onClick={minus} className="flex items-center justify-center w-8 h-8 
+                                                            bg-gray-200 hover:bg-gray-400 text-[2em]">
                                 -
                             </button>
-                            <span className="flex-1 text-center">{productNum}</span>
-                            <button onClick={add} className="flex-1 bg-gray-200 hover:bg-gray-400 text-[2em]">
+                            <span className="w-20 text-center">{productNum}</span>
+                            <button onClick={add} className="flex items-center justify-center 
+                                                            w-8 h-8 bg-gray-200 hover:bg-gray-400 text-[2em]">
                                 +
                             </button>
                         </div>
                         <button 
-                            className="bg-red-700 w-full h-[2em] text-white mt-0 hover:opacity-60" 
+                            className="bg-[#9F79EE] w-36 h-[2em] text-white mt-0 hover:opacity-60" 
                             onClick={() => addtoCart(`demo@gmail.com`)}>
-                            Add to Cart
+                            {addingBtnText}
                         </button>
                     </div>
                 </div>
