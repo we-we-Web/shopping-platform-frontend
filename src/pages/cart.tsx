@@ -115,18 +115,14 @@ export default function CartPage() {
         console.log('Cart updated:', cart);
     }, [cart]);
 
-    const updateQuantity = (productID: string, delta: number) => {
-        const newCart = cart.map((item) => {
-            if (item.product.id === productID) {
-                item.quantity += delta;
-                if (item.quantity <= 0) {
-                    removeFromCart(productID);
-                    return ;
-                }
-            }
-            return item;
-        }) as CartItem[];
-        setCart(newCart ?? []);
+    const updateQuantity = async (index: number, delta: number) => {
+        setCart((prevCart) => {
+            const newCart = [...prevCart];
+            newCart[index].quantity += delta;
+
+            updateRemoteQuantity(index, delta);
+            return newCart;
+        });
     };
 
     const toggleCheckout = (productId: string) => {
@@ -139,13 +135,14 @@ export default function CartPage() {
         );
     };
 
-    const removeFromCart = async(productID: string) => {
+    const updateRemoteQuantity = async(index: number, delta: number) => {
         const url = `https://dongyi-api.hnd1.zeabur.app/cart/api/item-upd`;
         const id = `demo@gmail.com`;
         const request = {
             id: id,
-            product: `${productID}`,
-            quantity: 0,
+            product: `${cart[index].product.id}`,
+            delta: delta,
+            remaining: cart[index].product.remain_amount,
         }
         try {
             const response = await fetch(url, {
@@ -156,8 +153,9 @@ export default function CartPage() {
                 body: JSON.stringify(request),
             });
             if (response.ok) {
-                setCart(cart.filter(item => item.product.id !== productID));
-                alert('remove cart successfully');
+                if (cart[index].quantity <= 0) {
+                    setCart(cart.filter(item => item.product.id !== cart[index].product.id));
+                }
             } else {
                 console.log('failed to fetch cart:', response.status);
             }
@@ -208,6 +206,20 @@ export default function CartPage() {
 
             <div className="cart">
                 <h2 className="text-xl font-semibold mb-2 p-6 relative mt-16">購物車</h2>
+                    {cart.length > 1 && (
+                        <div className="flex items-center">
+                            <input
+                                type="checkbox"
+                                checked={cart.every(item => item.isSelected)}
+                                onChange={() => {
+                                    const allSelected = cart.every(item => item.isSelected);
+                                    setCart(cart.map(item => ({ ...item, isSelected: !allSelected })));
+                                }}
+                                className="mr-2"
+                            />
+                            <span>{cart.every(item => item.isSelected) ? '取消全選' : '全選'}</span>
+                        </div>
+                    )}
                 {cart.length === 0 ? (
                     <p>購物車是空的。</p>
                 ) : (
@@ -233,19 +245,19 @@ export default function CartPage() {
                                     <div className="flex space-x-2">
                                         <button
                                             className="bg-gray-500 text-white px-2 py-1 rounded hover:bg-gray-700"
-                                            onClick={() => updateQuantity(item.product.id, -1)}
+                                            onClick={() => updateQuantity(index, -1)}
                                         >
                                             -
                                         </button>
                                         <button
                                             className="bg-gray-500 text-white px-2 py-1 rounded hover:bg-gray-700"
-                                            onClick={() => updateQuantity(item.product.id, 1)}
+                                            onClick={() => updateQuantity(index, 1)}
                                         >
                                             +
                                         </button>
                                         <button
                                             className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-700"
-                                            onClick={() => removeFromCart(item.product.id)}
+                                            onClick={() => updateQuantity(index, -item.product.remain_amount)}
                                         >
                                             移除
                                         </button>

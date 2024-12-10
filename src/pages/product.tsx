@@ -3,11 +3,14 @@
 import React, { useEffect, useState } from 'react';
 import Product from '../app/model/product';
 import { useRouter } from 'next/navigation';
-import { SlActionUndo } from 'react-icons/sl';
 import NavigationBar from '../app/component/NavigationBar';
+import Image from 'next/image';
+import '../globals.css';
 
 export default function ProductContent() {
     const [product, setProduct] = useState<Product | null>(null);
+    const [productNum, setProductNum] = useState(1);
+    const [addingBtnText, setAddingBtnText] = useState('Add to Cart');
     const router = useRouter();
 
     useEffect(() => {
@@ -48,7 +51,8 @@ export default function ProductContent() {
         const request = {
             id: id,
             product: `${product?.id}`,
-            quantity: 1,
+            delta: productNum,
+            remaining: product?.remain_amount,
         }
         console.log('request body:', request);
         try {
@@ -62,7 +66,11 @@ export default function ProductContent() {
             if (response.ok) {
                 const result = await response.json();
                 console.log(result);
-                alert('upd cart item successfully');
+                setAddingBtnText('Successfully!');
+                setTimeout(() => {
+                    setAddingBtnText('Add to Cart');
+                }, 600);
+                return ;
             } else if (response.status === 404) {
                 console.log('cart not found');
             } else {
@@ -71,29 +79,58 @@ export default function ProductContent() {
         } catch (err) {
             console.error('error:', err);
         }
+        setAddingBtnText('Failed...');
+        setTimeout(() => {
+            setAddingBtnText('Add to Cart');
+        }, 600);
     };
+
+    const add = () => {
+        setProductNum(productNum+1);
+    }
+    const minus = () => {
+        if(productNum <= 2) setProductNum(1);
+        else setProductNum(productNum-1);
+    }
 
     if (!product) return <p>Loading...</p>;
     return (
         <div className="flex h-[100%] w-[100%] pt-[10vh]">
             <NavigationBar />
-            <div className="fixed top-10 left-10">
-                <button type="button" onClick={()=>router.back()} className="hover:opacity-70">
-                    <SlActionUndo size={40}/>
-                </button>
-            </div>
-            <div className="flex-col basis-1/2 pl-[15vw]">
-                <img src={product.image || "./default.png"} className="h-96 rounded-lg object-contain"/>
-            </div>
-            <div className="flex-col basis-1/2 pr-[10vw]">
-                <h1 className="text-[4em] font-bold">{product.name}</h1>
-                <div className="text-[3em] text-red-700 font-bold">{product.price} <span className="text-[0.5em]">元</span> </div>
-                <div>{product.description}</div>
-                <button 
-                    className="bg-red-700 w-[10em] h-[2em] text-white mt-[5em] ml-[3em] hover:opacity-60" 
-                    onClick={() => addtoCart(`demo@gmail.com`)}>
-                        add to cart
-                </button>
+            <div className='flex m-8'>
+                <Image 
+                    src={product.image ?? "/default.png"}
+                    className='mr-[5vw] border-gray-400 border object-contain'
+                    alt={product.name}
+                    width={800}
+                    height={800}
+                />
+                <div className="flex-col pr-[10vw]">
+                    <h1 className="text-[4em] font-bold">{product.name}</h1>
+                    <div className="text-[3em] text-red-700 font-bold">
+                        {product.price} 
+                        <span className="text-[0.5em]">元</span> 
+                    </div>
+                    <div>{product.description}</div>
+                    <div className="flex flex-col mt-16">
+                        <div className="flex items-center justify-center w-36 m-0">
+                            <button onClick={minus} className="flex items-center justify-center w-8 h-8 
+                                                            bg-gray-200 hover:bg-gray-400 text-[2em]">
+                                -
+                            </button>
+                            <span className="w-20 text-center">{productNum}</span>
+                            <button onClick={add} className="flex items-center justify-center 
+                                                            w-8 h-8 bg-gray-200 hover:bg-gray-400 text-[2em]">
+                                +
+                            </button>
+                        </div>
+                        <button 
+                            className="bg-[#9F79EE] w-36 h-[2em] text-white mt-0 hover:opacity-60" 
+                            onClick={() => addtoCart(`demo@gmail.com`)}>
+                            {addingBtnText}
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     );

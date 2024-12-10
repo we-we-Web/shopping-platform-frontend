@@ -8,7 +8,7 @@ import { UserProfile } from '../model/userProfile';
 
 function LoginButton() {
     const router = useRouter();
-    const { id_token } = router.query;
+    // const { id_token } = router.query;
     const [isLoginOpen, setLoginOpen] = useState(false);
     const [profile, setProfile] = useState<UserProfile | null>(null);
 
@@ -22,16 +22,8 @@ function LoginButton() {
                 console.error("無效的 JWT:", error);
                 localStorage.removeItem('access-token');
             }
-        } else if (id_token) {
-            try {
-                const decoded: UserProfile = jwtDecode(`${id_token}`);
-                setProfile(decoded);
-                localStorage.setItem('access-token', `${id_token}`);
-            } catch (error) {
-                console.error("無效的 JWT:", error);
-            }
         }
-    }, [id_token]);
+    }, []);
 
     useEffect(() => {
         document.body.style.overflow = isLoginOpen ? 'hidden' : 'auto';
@@ -50,10 +42,10 @@ function LoginButton() {
             <button
                 onClick={handleLoginClick}
                 className="flex items-center rounded-full hover:opacity-70"
-                style={{ border: '2px solid black' }}
+                style={{ border: '2px solid #9F79EE' }}
             >
                 { profile ? <img src={profile.picture} alt="Profile Picture" className="w-9 rounded-full" /> :
-                    <FontAwesomeIcon icon={faUserRegular} className="text-2xl m-1.5" />
+                    <FontAwesomeIcon icon={faUserRegular} className="text-2xl m-1.5 text-[#9F79EE]" />
                 }
             </button>
 
