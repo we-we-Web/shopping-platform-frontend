@@ -29,7 +29,7 @@ function Admin() {
         };
 
         try {
-            const url = 'https://dongyi-api.hnd1.zeabur.app/product/products';
+            const url = 'https://dongyi-api.hnd1.zeabur.app/product/api/product';
 
             const response = await fetch(url, {
                 method: 'POST',
