@@ -1,4 +1,4 @@
-import Link from "next/link";
+// import Link from "next/link";
 import Product from "../model/product";
 import { useRouter } from 'next/router';
 const getStarRating = (rating: number) => {
@@ -25,7 +25,7 @@ const getStarRating = (rating: number) => {
     );
 };
 
-export default function ProductCard({ product }: { product: Product}, key: number) {
+export default function ProductCard({ product }: { product: Product}) {
     const router = useRouter();
     const handleNavigate = (id: string) => {
         router.push(`/product/?id=${id}`);

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Product from '../app/model/product';
-import { useRouter } from 'next/router';
+// import { useRouter } from 'next/router';
 import NavigationBar from '../app/component/NavigationBar';
 import Image from 'next/image';
 import '../globals.css';
@@ -44,7 +44,7 @@ export default function ProductContent({ product }: { product: Product }) {
     // const [product, setProduct] = useState<Product | null>(null);
     const [productNum, setProductNum] = useState(1);
     const [addingBtnText, setAddingBtnText] = useState('Add to Cart');
-    const router = useRouter();
+    // const router = useRouter();
 
     useEffect(() => {
 
