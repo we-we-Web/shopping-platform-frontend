@@ -13,7 +13,7 @@ export const getServerSideProps: GetServerSideProps = async(context) => {
     // console.log('id:', id);
     // const getProduct = async(id: string) => {
     try {
-        const url = `https://dongyi-api.hnd1.zeabur.app/product/products/${ProductId.id}`;
+        const url = `https://dongyi-api.hnd1.zeabur.app/product/api/product/${ProductId.id}`;
         const response = await fetch(url);
         if (response.ok) {
             const product: Product = await response.json();
