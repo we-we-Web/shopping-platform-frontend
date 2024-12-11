@@ -1,5 +1,3 @@
-'use server'
-
 import { GetServerSideProps } from 'next';
 import ProductCard from '../app/component/ProductCard';
 import Product from '../app/model/product';
@@ -8,13 +6,15 @@ import '../globals.css';
 import { useEffect, useState } from 'react';
 
 export const getServerSideProps: GetServerSideProps = async () => {
+    console.log('hello world');
     try {
-        const url = 'https://dongyi-api.hnd1.zeabur.app/product/products';
+        const url = 'https://dongyi-api.hnd1.zeabur.app/product/api/product';
         const response = await fetch(url);
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const data: Product[] = await response.json();
+        console.log('hello, ', data);
         return { props: { data } };
     } catch (err) {
         console.error("Error fetching data:", err);
@@ -27,6 +27,7 @@ function Home({ data }: { data: Product[] }) {
     const [selectedCategory, setSelectedCategory] = useState<string>('');
     const [filteredData, setFilteredData] = useState<Product[]>([]);
 
+    console.log('fuck you');
     useEffect(() => {
         setFilteredData(data);
         const uniqueCategories: string[] = Array.from(

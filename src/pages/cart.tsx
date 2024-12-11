@@ -71,7 +71,7 @@ export default function CartPage() {
             }
         }
         const getProduct = async(id: string) => {
-            const url = `https://dongyi-api.hnd1.zeabur.app/product/products/${id}`;
+            const url = `https://dongyi-api.hnd1.zeabur.app/product/api/product/${id}`;
             try {
                 const response = await fetch(url);
                 if (response.ok) {
@@ -244,8 +244,10 @@ export default function CartPage() {
                                     </div>
                                     <div className="flex space-x-2">
                                         <button
-                                            className="bg-gray-500 text-white px-2 py-1 rounded hover:bg-gray-700"
+                                            className={`bg-gray-500 text-white px-2 py-1 rounded hover:bg-gray-700
+                                                        ${item.quantity === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-700"}`}
                                             onClick={() => updateQuantity(index, -1)}
+                                            disabled={item.quantity === 1}
                                         >
                                             -
                                         </button>
