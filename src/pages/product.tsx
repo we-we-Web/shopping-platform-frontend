@@ -2,16 +2,16 @@
 
 import React, { useEffect, useState } from 'react';
 import Product from '../app/model/product';
-// import { useRouter } from 'next/router';
 import NavigationBar from '../app/component/NavigationBar';
 import Image from 'next/image';
 import '../globals.css';
 import { GetServerSideProps } from 'next';
+import { UserProfile } from '../app/model/userProfile';
+import { jwtDecode } from 'jwt-decode';
+import LoginPopup from '../app/component/LoginPopup';
 
 export const getServerSideProps: GetServerSideProps = async(context) => {
     const ProductId = context.query!;
-    // console.log('id:', id);
-    // const getProduct = async(id: string) => {
     try {
         const url = `https://dongyi-api.hnd1.zeabur.app/product/api/product/${ProductId.id}`;
         const response = await fetch(url);
@@ -27,27 +27,29 @@ export const getServerSideProps: GetServerSideProps = async(context) => {
         console.error('error:', err);
         return { props: {} };
     }
-    // }
-
-    // const productID = localStorage.getItem("product");
-    // const router = useRouter();
-    // if (!productID) {
-    //     console.error("failed to get product id from local storage.");
-    //     // TODO
-    //     router.push('/');
-    //     return { props: { data: [] } };
-    // }
-    // getProduct(productID);
 }
 
 export default function ProductContent({ product }: { product: Product }) {
-    // const [product, setProduct] = useState<Product | null>(null);
+    const [email, setEmail] = useState('');
     const [productNum, setProductNum] = useState(1);
+    const [isLoginOpen, setLoginOpen] = useState(false);
     const [addingBtnText, setAddingBtnText] = useState('Add to Cart');
-    // const router = useRouter();
 
     useEffect(() => {
+        document.body.style.overflow = isLoginOpen ? 'hidden' : 'auto';
+    }, [isLoginOpen]);
 
+    useEffect(() => {
+        const token = localStorage.getItem('access-token');
+        if (token) {
+            try {
+                const {email}: UserProfile = jwtDecode(token);
+                setEmail(email);
+            } catch (error) {
+                console.error("無效的 JWT:", error);
+                localStorage.removeItem('access-token');
+            }
+        }
     }, []);
 
     useEffect(() => {
@@ -57,6 +59,9 @@ export default function ProductContent({ product }: { product: Product }) {
     }, [product]);
     
     const addtoCart = async(id: string) => {
+        if (id === '') {
+            setLoginOpen(true);
+        }
         const url = `https://dongyi-api.hnd1.zeabur.app/cart/api/item-upd`;
         const request = {
             id: id,
@@ -137,12 +142,17 @@ export default function ProductContent({ product }: { product: Product }) {
                         </div>
                         <button 
                             className="bg-[#9F79EE] w-36 h-[2em] text-white mt-0 hover:opacity-60" 
-                            onClick={() => addtoCart(`demo@gmail.com`)}>
+                            onClick={() => addtoCart(email)}>
                             {addingBtnText}
                         </button>
                     </div>
                 </div>
             </div>
+            {isLoginOpen &&
+                <LoginPopup
+                    onClose={() => setLoginOpen(false)} 
+                />
+            }
         </div>
     );
 }
