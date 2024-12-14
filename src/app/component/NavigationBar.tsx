@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import LoginButton from './LoginButton';
-import LoginPopup from './LoginPopup';
 import CartButton from './CartButton';
 import Link from 'next/link';
 
@@ -31,10 +30,8 @@ const NavigationBar = () => {
           東毅中
         </Link>
       </div>
-      <LoginButton />
-      {isLoginOpen && <LoginPopup onClose={() => setLoginOpen(false)} />}
-        
       <CartButton />
+      <LoginButton />
     </nav>
   );
 };

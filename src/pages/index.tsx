@@ -27,7 +27,6 @@ function Home({ data }: { data: Product[] }) {
     const [selectedCategory, setSelectedCategory] = useState<string>('');
     const [filteredData, setFilteredData] = useState<Product[]>([]);
 
-    console.log('fuck you');
     useEffect(() => {
         setFilteredData(data);
         const uniqueCategories: string[] = Array.from(

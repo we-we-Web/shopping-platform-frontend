@@ -8,7 +8,6 @@ import { UserProfile } from '../model/userProfile';
 
 function LoginButton() {
     const router = useRouter();
-    // const { id_token } = router.query;
     const [isLoginOpen, setLoginOpen] = useState(false);
     const [profile, setProfile] = useState<UserProfile | null>(null);
 
