@@ -1,14 +1,9 @@
-import { useState } from 'react';
 import LoginButton from './LoginButton';
-import LoginPopup from './LoginPopup';
 import CartButton from './CartButton';
 import Link from 'next/link';
 
 
 const NavigationBar = () => {
-
-  const [isLoginOpen, setLoginOpen] = useState(false);
-
   return (
     <nav
       style={{
@@ -25,16 +20,13 @@ const NavigationBar = () => {
         height: '80px', 
       }}
     >
-      {/* Logo */}
       <div style={{ display: 'flex', justifyContent: 'center', flex: 1 }}>
         <Link href="/" style={{ fontSize: '24px', color: '#68228B' }}>
           東毅中
         </Link>
       </div>
-      <LoginButton />
-      {isLoginOpen && <LoginPopup onClose={() => setLoginOpen(false)} />}
-        
       <CartButton />
+      <LoginButton />
     </nav>
   );
 };

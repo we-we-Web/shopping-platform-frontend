@@ -1,6 +1,7 @@
 import axios from 'axios';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { FaGoogle } from "react-icons/fa";
 
 export default function LoginRegister({ onClose }: {onClose: () => void}) {
     const [authUrl, setAuthUrl] = useState<string | null>(null);
@@ -14,14 +15,20 @@ export default function LoginRegister({ onClose }: {onClose: () => void}) {
     }, []);
 
     return (
-        <div>
+        <>
             {authUrl ? (
                 <Link href={authUrl} onClick={onClose}>
-                    <button style={{ border: '1px solid' }}>Login with Google</button>
+                    <button className='border-2 border-purple-400 rounded-xl bg-purple-300 
+                                        shadow-xl p-2 m-3 hover:opacity-60'>
+                        <div className='flex px-2 text-white'>
+                            <FaGoogle className='mr-2 mt-1' />
+                            Login with Google
+                        </div>
+                    </button>
                 </Link>
             ) : (
                 <p>Loading...</p>
             )}
-        </div>
+        </>
     );
 }
