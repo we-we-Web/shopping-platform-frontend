@@ -6,6 +6,8 @@ import NavigationBar from '../app/component/NavigationBar';
 import '../globals.css';
 import Link from 'next/link';
 import { CartItem } from '../app/model/cartItem';
+import { UserProfile } from '../app/model/userProfile';
+import { jwtDecode } from 'jwt-decode';
 
 export default function CartPage() {
     const router = useRouter();
@@ -107,8 +109,20 @@ export default function CartPage() {
             setCart(cartItems);
             setLoading(false);
         }
-        const id = `demo@gmail.com`;
-        setupCart(id);
+
+        const token = localStorage.getItem('access-token');
+        if (token) {
+            try {
+                const {email}: UserProfile = jwtDecode(token);
+                setupCart(email);
+                return ;
+            } catch (error) {
+                console.error("無效的 JWT:", error);
+                localStorage.removeItem('access-token');
+            }
+        }
+        alert('Error Occur...');
+        router.push('/');
     }, []);
 
     useEffect(() => {
