@@ -34,6 +34,7 @@ export default function ProductContent({ product }: { product: Product }) {
     const [productNum, setProductNum] = useState(1);
     const [isLoginOpen, setLoginOpen] = useState(false);
     const [addingBtnText, setAddingBtnText] = useState('Add to Cart');
+    const [showPopup, setShowPopup] = useState(false);
 
     useEffect(() => {
         document.body.style.overflow = isLoginOpen ? 'hidden' : 'auto';
@@ -100,8 +101,36 @@ export default function ProductContent({ product }: { product: Product }) {
         }, 600);
     };
 
+    
+    const Popup = ({onClose}: {onClose: () => void}) => {
+        const handleClickOutside = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+            if (event.target === event.currentTarget) {
+                onClose();
+            }
+        };
+        return (
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" onClick={handleClickOutside}>
+                <div className="bg-white p-8 rounded-lg w-80 shadow-lg">
+                    <div className="my-4 text-center font-bold">
+                        可訂購數量已達上限
+                    </div>
+                    <button 
+                        onClick={onClose} 
+                        className="mt-2 text-gray-500 hover:text-gray-700 w-full text-center">
+                        關閉
+                    </button>
+                </div>
+            </div>
+        );
+    };
     const add = () => {
-        setProductNum(productNum+1);
+        if(productNum < product.remain_amount){
+            setProductNum(productNum+1);
+        }
+        else if(productNum === product.remain_amount){
+            setProductNum(productNum);
+            setShowPopup(true);
+        }   
     }
     const minus = () => {
         if(productNum <= 2) setProductNum(1);
@@ -111,6 +140,7 @@ export default function ProductContent({ product }: { product: Product }) {
     if (!product) return <p>Loading...</p>;
     return (
         <div className="flex h-[100%] w-[100%] pt-[10vh]">
+            {showPopup && <Popup onClose={()=>setShowPopup(false)} />}
             <NavigationBar />
             <div className='flex m-8'>
                 <Image 
@@ -129,6 +159,7 @@ export default function ProductContent({ product }: { product: Product }) {
                     </div>
                     <div>{product.description}</div>
                     <div className="flex flex-col mt-16">
+                        <div className="mb-2">剩餘數量：{product.remain_amount}</div>
                         <div className="flex items-center justify-center w-36 m-0">
                             <button onClick={minus} className="flex items-center justify-center w-8 h-8 
                                                             bg-gray-200 hover:bg-gray-400 text-[2em]">
