@@ -216,7 +216,7 @@ export default function CartPage() {
         <>
             <NavigationBar />
         <div className="container mx-auto p-4">
-            <h1 className="fixed top-0 left-0 text-2xl font-bold mb-4 p-4 bg-white w-full z-10">購物車頁面</h1>
+            <h1 className="fixed top-0 left-0 text-2xl font-bold mb-4 p-4 bg-white w-full z-5">購物車頁面</h1>
 
             <div className="cart">
                 <h2 className="text-xl font-semibold mb-2 p-6 relative mt-16">購物車</h2>
