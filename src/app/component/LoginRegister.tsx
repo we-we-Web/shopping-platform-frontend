@@ -1,46 +1,34 @@
-import { GoogleLogin, GoogleOAuthProvider, CredentialResponse } from '@react-oauth/google';
+import axios from 'axios';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { FaGoogle } from "react-icons/fa";
 
-interface LoginPopupProps {
-    onClose: () => void;
-}
-function LoginRegister({ onClose }: LoginPopupProps) {
-    const handleLoginSuccess = async (credentialResponse: CredentialResponse) => {
-        onClose();
-        try {
-            const response = await fetch('/api/callback', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ credential: credentialResponse.credential }),
-            });
+export default function LoginRegister({ onClose }: {onClose: () => void}) {
+    const [authUrl, setAuthUrl] = useState<string | null>(null);
 
-            if (response.ok) {
-                console.log('Login successful');
-            } else {
-                console.log('Login failed');
-            }
-        } catch (error) {
-            console.error('Error during login', error);
-        }
-    };
+    useEffect(() => {
+        axios.get('https://dongyi-api.hnd1.zeabur.app/user/auth/login', {
+            withCredentials:true
+        })
+            .then((res) => setAuthUrl(res.data.auth_url))
+            .catch((err) => console.error(err));
+    }, []);
 
     return (
-        <GoogleOAuthProvider clientId="242403448980-4japuuckr49kb7flht7t2sgiiqq4ffoe.apps.googleusercontent.com">
-            <div className="flex flex-col items-center justify-center">
-                <div className="mt-4">
-                    <div className="flex gap-2">
-                        <GoogleLogin
-                            onSuccess={handleLoginSuccess}
-                            onError={() => {
-                                console.log('Login Failed');
-                            }}
-                        />
-                    </div>
-                </div>
-            </div>
-        </GoogleOAuthProvider>
+        <>
+            {authUrl ? (
+                <Link href={authUrl} onClick={onClose}>
+                    <button className='border-2 border-purple-400 rounded-xl bg-purple-300 
+                                        shadow-xl p-2 m-3 hover:opacity-60'>
+                        <div className='flex px-2 text-white'>
+                            <FaGoogle className='mr-2 mt-1' />
+                            Login with Google
+                        </div>
+                    </button>
+                </Link>
+            ) : (
+                <p>Loading...</p>
+            )}
+        </>
     );
 }
-
-export default LoginRegister;
