@@ -44,7 +44,14 @@ function LoginButton() {
                 className="flex items-center rounded-full hover:opacity-70"
                 style={{ border: '2px solid #9F79EE' }}
             >
-                { profile ? <Image src="profile.picture" alt="Profile Picture" className="w-9 rounded-full" /> :
+                { profile ? (
+                        <Image
+                        src={profile.picture} 
+                        alt="Profile Picture"
+                        width={36} 
+                        height={36}
+                        className="rounded-full" 
+                        />) : 
                     <FontAwesomeIcon icon={faUserRegular} className="text-2xl m-1.5 text-[#9F79EE]" />
                 }
             </button>
