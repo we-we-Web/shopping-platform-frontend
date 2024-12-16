@@ -16,6 +16,7 @@ export default function CartPage() {
     const [coupon, setCoupon] = useState('');
     const [discount, setDiscount] = useState(0);
     const [isLoading, setLoading] = useState(true);
+    const [showPopup, setShowPopup] = useState(false);
 
     useEffect(() => {
         const createCart = async(id: string) => {
@@ -129,10 +130,37 @@ export default function CartPage() {
         console.log('Cart updated:', cart);
     }, [cart]);
 
+    const Popup = ({onClose}: {onClose: () => void}) => {
+            const handleClickOutside = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+                if (event.target === event.currentTarget) {
+                    onClose();
+                }
+            };
+            return (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" onClick={handleClickOutside}>
+                    <div className="bg-white p-8 rounded-lg w-80 shadow-lg">
+                        <div className="my-4 text-center font-bold">
+                            可訂購數量已達上限
+                        </div>
+                        <button 
+                            onClick={onClose} 
+                            className="mt-2 text-gray-500 hover:text-gray-700 w-full text-center">
+                            關閉
+                        </button>
+                    </div>
+                </div>
+            );
+        };
     const updateQuantity = async (index: number, delta: number) => {
         setCart((prevCart) => {
             const newCart = [...prevCart];
-            newCart[index].quantity += delta;
+            if(newCart[index].quantity < newCart[index].product.remain_amount){
+                newCart[index].quantity += delta;
+            }
+            else if(newCart[index].quantity === newCart[index].product.remain_amount){
+                setShowPopup(true);
+                delta = 0;
+            }
 
             updateRemoteQuantity(index, delta);
             return newCart;
@@ -219,6 +247,7 @@ export default function CartPage() {
             <h1 className="fixed top-0 left-0 text-2xl font-bold mb-4 p-4 bg-white w-full z-10">購物車頁面</h1>
 
             <div className="cart">
+                {showPopup && <Popup onClose={()=>setShowPopup(false)} />}
                 <h2 className="text-xl font-semibold mb-2 p-6 relative mt-16">購物車</h2>
                     {cart.length > 1 && (
                         <div className="flex items-center">
