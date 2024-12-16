@@ -3,7 +3,14 @@ import LogoutButton from '../app/component/LogoutButton';
 import { jwtDecode } from 'jwt-decode';
 import { UserProfile } from '../app/model/userProfile';
 import { useRouter } from 'next/router';
-import { User } from '../app/model/userModel';
+
+interface User {
+    id: string,
+    name: string,
+    orders: string[],
+    created_at: string,
+    updated_at: string,
+};
 
 function User() {
     const router = useRouter();
