@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import Product from '../app/model/product';
 import NavigationBar from '../app/component/NavigationBar';
-import Image from 'next/image';
 import '../globals.css';
 import { GetServerSideProps } from 'next';
 import { UserProfile } from '../app/model/userProfile';
