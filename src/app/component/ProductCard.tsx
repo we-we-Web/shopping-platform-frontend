@@ -1,6 +1,7 @@
 // import Link from "next/link";
 import Product from "../model/product";
 import { useRouter } from 'next/router';
+import Image from 'next/image';
 const getStarRating = (rating: number) => {
     const filledStars = Math.floor(rating);
     const halfStar = rating - filledStars >= 0.5 ? 1 : 0;
@@ -37,11 +38,15 @@ export default function ProductCard({ product }: { product: Product}) {
                 onClick={() => handleNavigate(`${product.id}`)}
                 className="flex flex-col bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300 border border-slate-300 min-h-[300px] h-full cursor-pointer"
             >
-                <img
-                    src={product.image || './default.png'}
-                    alt={product.name}
-                    className="w-full h-56 object-cover"
-                />
+            <Image
+                src={product.image || '/default.png'} 
+                alt={product.name}
+                width={0} 
+                height={0}
+                sizes="100vw" 
+                className="w-full h-56 object-cover" 
+                style={{ width: '100%', height: '14rem' }} 
+            />
                 <div className="p-4 flex flex-col justify-between flex-grow">
                     <h2 className="text-lg font-bold">{product.name}</h2>
                     <p className="text-gray-500">{product.categories}</p>
