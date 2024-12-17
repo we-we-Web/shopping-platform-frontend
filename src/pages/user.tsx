@@ -92,7 +92,7 @@ function User() {
             <button onClick={() => router.push('/')}>back</button>
             <p>{user.id}</p>
             <p>{user.name}</p>
-            {   user.orders.length === 0 ? 
+            { user && user.orders && user.orders.length === 0 ? 
                 <p>no orders...</p> : 
                 user.orders.map((item, index) => item && (
                     <div key={index}>
