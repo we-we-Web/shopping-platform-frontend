@@ -2,7 +2,7 @@ import Image from "next/image";
 import { useState } from "react";
 
 
-function ProductImage({id, name}: {id: string, name: string}) {
+function ProductImage({id, name, isIndex}: {id: string, name: string, isIndex: boolean}) {
     const [src, setSrc] = useState(
         `https://dongyi-api.hnd1.zeabur.app/product/api/product/get_image?product_id=${id}`
     );
@@ -10,11 +10,9 @@ function ProductImage({id, name}: {id: string, name: string}) {
         <Image
             src={src}
             alt={name}
-            width={0} 
-            height={0}
-            sizes="100vw" 
-            className="w-full h-56 object-cover" 
-            style={{ width: '100%', height: '14rem' }} 
+            width={1200} 
+            height={1200}
+            className={isIndex ? "w-full h-64 object-cover" : "w-auto h-[60vh] object-contain"}
             onError={() => setSrc('/default.png')}
         />
     )

@@ -10,6 +10,7 @@ import { UserProfile } from '../app/model/userProfile';
 import { jwtDecode } from 'jwt-decode';
 import LoginPopup from '../app/component/LoginPopup';
 import Loading from '../app/component/Loading';
+import ProductImage from '../app/component/ProductImage';
 
 export const getServerSideProps: GetServerSideProps = async(context) => {
     const ProductId = context.query!;
@@ -114,14 +115,7 @@ export default function ProductContent({ product }: { product: Product }) {
         <div className="flex h-[100%] w-[100%] pt-[10vh]">
             <NavigationBar />
             <div className='flex m-8'>
-                <Image 
-                    src={product.image ?? "/default.png"}
-                    className='mr-[5vw] border-gray-400 border object-contain'
-                    alt={product.name}
-                    width={800}
-                    height={800}
-                    priority={true}
-                />
+                <ProductImage id={product.id} name={product.name} isIndex={false} />
                 <div className="flex-col pr-[10vw]">
                     <h1 className="text-[4em] font-bold">{product.name}</h1>
                     <div className="text-[3em] text-red-700 font-bold">
