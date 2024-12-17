@@ -17,6 +17,7 @@ export default function CartPage() {
     const [coupon, setCoupon] = useState('');
     const [discount, setDiscount] = useState(0);
     const [isLoading, setLoading] = useState(true);
+    const [email, setEmail] = useState('');
 
     useEffect(() => {
         const createCart = async(id: string) => {
@@ -110,20 +111,18 @@ export default function CartPage() {
             setCart(cartItems);
             setLoading(false);
         }
-
         const token = localStorage.getItem('access-token');
         if (token) {
             try {
                 const {email}: UserProfile = jwtDecode(token);
+                setEmail(email);
                 setupCart(email);
-                return ;
             } catch (error) {
                 console.error("無效的 JWT:", error);
-                localStorage.removeItem('access-token');
             }
+        } else {
+            router.push('/');
         }
-        alert('Error Occur...');
-        router.push('/');
     }, []);
 
     useEffect(() => {
@@ -152,9 +151,8 @@ export default function CartPage() {
 
     const updateRemoteQuantity = async(index: number, delta: number) => {
         const url = `https://dongyi-api.hnd1.zeabur.app/cart/api/item-upd`;
-        const id = `demo@gmail.com`;
         const request = {
-            id: id,
+            id: `${email}`,
             product: `${cart[index].product.id}`,
             delta: delta,
             remaining: cart[index].product.remain_amount,
@@ -193,19 +191,65 @@ export default function CartPage() {
             .reduce((total, item) => total + item.product.price * item.quantity, 0) * (1 - discount);
     };
 
+    const addOrderToUser = async() => {
+        const url = `https://dongyi-api.hnd1.zeabur.app/user/account/order-add`;
+        const orderId = await createOrder();
+        if (orderId) {
+            const request = {
+                'id': `${email}`,
+                'order': `${orderId}`,
+            }
+            try {
+                const response = await fetch(url, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(request),
+                })
+                if (response.ok) {
+                    router.push(`/order?id=${orderId}`);
+                } else {
+                    console.log('add order to user failed:', response.status);
+                }
+            } catch (err) {
+                console.log(err);
+            }
+        }
+    }
 
-    // 新增訂單清單至 local storage
-    const addOrderlist = () => {    
-        let arr: CartItem[];
-        localStorage.removeItem("orderList");
-        if (localStorage.getItem("orderList") == null) {
-            arr = cart.filter((item) => item.isSelected);
-            localStorage.setItem("orderList", JSON.stringify(arr));
-        } else {
-            const orderList = localStorage.getItem("orderList");
-            arr = orderList ? JSON.parse(orderList) : [];
-            arr = cart.filter((item) => item.isSelected);
-            localStorage.setItem("orderList", JSON.stringify(arr));
+    const createOrder = async() => {    
+        const url = `https://dongyi-api.hnd1.zeabur.app/order/api/order-create`
+        const selected = cart.filter((item) => {
+            return item.isSelected
+        });
+        const content = selected.map((item) => {
+            return {
+                id: item.product.id,
+                price: item.product.price,
+                quantity: item.quantity,
+            }
+        });
+        const request = {
+            "owner": `${email}`,
+            "content": content,
+        }
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(request),
+            });
+            if (response.ok) {
+                const result = await response.json();
+                return result.id;
+            } else {
+                console.log('create order failed:', response.status);
+            }
+        } catch (err) {
+            console.log(err);
         }
     };
 
@@ -216,117 +260,119 @@ export default function CartPage() {
     return (
         <>
             <NavigationBar />
-        <div className="container mx-auto p-4">
-            <h1 className="fixed top-0 left-0 text-2xl font-bold mb-4 p-4 bg-white w-full z-5">購物車頁面</h1>
-
-            <div className="cart">
-                <h2 className="text-xl font-semibold mb-2 p-6 relative mt-16">購物車</h2>
-                    {cart.length > 1 && (
-                        <div className="flex items-center">
-                            <input
-                                type="checkbox"
-                                checked={cart.every(item => item.isSelected)}
-                                onChange={() => {
-                                    const allSelected = cart.every(item => item.isSelected);
-                                    setCart(cart.map(item => ({ ...item, isSelected: !allSelected })));
-                                }}
-                                className="mr-2"
-                            />
-                            <span>{cart.every(item => item.isSelected) ? '取消全選' : '全選'}</span>
-                        </div>
-                    )}
-                {cart.length === 0 ? (
-                    <p>購物車是空的。</p>
-                ) : (
-                    <ul className='min-h-96'>
-                        {cart.map((item, index) => item && (
-                            <div key={index}>
-                                <li className="flex flex-col md:flex-row justify-between items-center mb-2 mt-5">
-                                    <div className="flex items-center space-x-2">
-                                        <input
-                                            type="checkbox"
-                                            onChange={() => toggleCheckout(item.product.id)}
-                                            checked={item.isSelected ?? false}
-                                        />
-                                        <Link 
-                                            href="product" 
-                                            onClick={() => localStorage.setItem('product', JSON.stringify(item.product.id))}
-                                        >
-                                            <span title={item.product.name}> {/* 顯示完整商品名稱 */}
-                                                {item.product.name} - NT${item.product.price} x {item.quantity}
-                                            </span>
-                                        </Link>
-                                    </div>
-                                    <div className="flex space-x-2">
-                                        <button
-                                            className={`bg-gray-500 text-white px-2 py-1 rounded hover:bg-gray-700
-                                                        ${item.quantity === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-700"}`}
-                                            onClick={() => updateQuantity(index, -1)}
-                                            disabled={item.quantity === 1}
-                                        >
-                                            -
-                                        </button>
-                                        <button
-                                            className="bg-gray-500 text-white px-2 py-1 rounded hover:bg-gray-700"
-                                            onClick={() => updateQuantity(index, 1)}
-                                        >
-                                            +
-                                        </button>
-                                        <button
-                                            className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-700"
-                                            onClick={() => updateQuantity(index, -item.product.remain_amount)}
-                                        >
-                                            移除
-                                        </button>
-                                    </div>
-                                </li>
-                                <hr />
+            <div className="container mx-auto p-4">
+                <h1 className="fixed top-0 left-0 text-2xl font-bold mb-4 p-4 bg-white w-full z-5">購物車頁面</h1>
+                <div className="cart">
+                    <h2 className="text-xl font-semibold mb-2 p-6 relative mt-16">購物車</h2>
+                        {cart.length > 1 && (
+                            <div className="flex items-center">
+                                <input
+                                    type="checkbox"
+                                    checked={cart.every(item => item.isSelected)}
+                                    onChange={() => {
+                                        const allSelected = cart.every(item => item.isSelected);
+                                        setCart(cart.map(item => ({ ...item, isSelected: !allSelected })));
+                                    }}
+                                    className="mr-2"
+                                />
+                                <span>{cart.every(item => item.isSelected) ? '取消全選' : '全選'}</span>
                             </div>
-                        ))}
-                    </ul>
-                )}
-            </div>
+                        )}
+                    {cart.length === 0 ? (
+                        <p>購物車是空的。</p>
+                    ) : (
+                        <ul className='min-h-96'>
+                            {cart.map((item, index) => item && (
+                                <div key={index}>
+                                    <li className="flex flex-col md:flex-row justify-between items-center mb-2 mt-5">
+                                        <div className="flex items-center space-x-2">
+                                            <input
+                                                type="checkbox"
+                                                onChange={() => toggleCheckout(item.product.id)}
+                                                checked={item.isSelected ?? false}
+                                            />
+                                            <Link 
+                                                href="product" 
+                                                onClick={() => localStorage.setItem('product', JSON.stringify(item.product.id))}
+                                            >
+                                                <span title={item.product.name}> {/* 顯示完整商品名稱 */}
+                                                    {item.product.name} - NT${item.product.price} x {item.quantity}
+                                                </span>
+                                            </Link>
+                                        </div>
+                                        <div className="flex space-x-2">
+                                            <button
+                                                className={`bg-gray-500 text-white px-2 py-1 rounded hover:bg-gray-700
+                                                            ${item.quantity === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-700"}`}
+                                                onClick={() => updateQuantity(index, -1)}
+                                                disabled={item.quantity === 1}
+                                            >
+                                                -
+                                            </button>
+                                            <button
+                                                className="bg-gray-500 text-white px-2 py-1 rounded hover:bg-gray-700"
+                                                onClick={() => updateQuantity(index, 1)}
+                                            >
+                                                +
+                                            </button>
+                                            <button
+                                                className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-700"
+                                                onClick={() => updateQuantity(index, -item.product.remain_amount)}
+                                            >
+                                                移除
+                                            </button>
+                                        </div>
+                                    </li>
+                                    <hr />
+                                </div>
+                            ))}
+                        </ul>
+                    )}
+                </div>
 
-            <div className="coupon mt-4">
-                <h2 className="text-xl font-semibold mb-2">使用折價券</h2>
-                <input
-                    type="text"
-                    placeholder="輸入折價券"
-                    value={coupon}
-                    onChange={(e) => setCoupon(e.target.value)}
-                    className="border px-2 py-1 mr-2"
-                />
-                <button
-                    className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-700"
-                    onClick={applyCoupon}
-                >
-                    確認
-                </button>
-            </div>
-
-            <div className="checkout mt-4">
-                <h2 className="text-xl font-semibold mb-2">結算</h2>
-                <p>總金額：NT${calculateTotal().toFixed(2)}</p>
-                <Link href="order">
+                <div className="coupon mt-4">
+                    <h2 className="text-xl font-semibold mb-2">使用折價券</h2>
+                    <input
+                        type="text"
+                        placeholder="輸入折價券"
+                        value={coupon}
+                        onChange={(e) => setCoupon(e.target.value)}
+                        className="border px-2 py-1 mr-2"
+                    />
                     <button
-                        className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 mt-2"
-                        disabled={cart.every((item) => item && !item.isSelected)}
-                        onClick={() => {alert('前往結帳頁面');addOrderlist();}}
+                        className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-700"
+                        onClick={applyCoupon}
                     >
-                        前往結帳
+                        確認
                     </button>
-                </Link>
-            </div>
+                </div>
 
-            <div className="mt-4">
-                <button
-                    className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700"
-                    onClick={() => router.push('/')}
-                >
-                    返回首頁
-                </button>
+                <div className="checkout mt-4">
+                    <h2 className="text-xl font-semibold mb-2">結算</h2>
+                    <p>總金額：NT${calculateTotal().toFixed(2)}</p>
+                    <Link href="order">
+                        <button
+                            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 mt-2"
+                            disabled={cart.every((item) => item && !item.isSelected)}
+                            onClick={() => {
+                                alert('前往結帳頁面');
+                                addOrderToUser();
+                            }}
+                        >
+                            前往結帳
+                        </button>
+                    </Link>
+                </div>
+
+                <div className="mt-4">
+                    <button
+                        className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700"
+                        onClick={() => router.push('/')}
+                    >
+                        返回首頁
+                    </button>
+                </div>
             </div>
-        </div>
         </>
     );
 }
