@@ -9,7 +9,6 @@ import { GetServerSideProps } from 'next';
 import { UserProfile } from '../app/model/userProfile';
 import { jwtDecode } from 'jwt-decode';
 import LoginPopup from '../app/component/LoginPopup';
-import Loading from '../app/component/Loading';
 
 export const getServerSideProps: GetServerSideProps = async(context) => {
     const ProductId = context.query!;
@@ -109,7 +108,7 @@ export default function ProductContent({ product }: { product: Product }) {
         else setProductNum(productNum-1);
     }
 
-    if (!product) return <Loading/>;
+    if (!product) return <p>Loading...</p>;
     return (
         <div className="flex h-[100%] w-[100%] pt-[10vh]">
             <NavigationBar />

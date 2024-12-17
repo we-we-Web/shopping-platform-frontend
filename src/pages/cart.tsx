@@ -8,7 +8,6 @@ import Link from 'next/link';
 import { CartItem } from '../app/model/cartItem';
 import { UserProfile } from '../app/model/userProfile';
 import { jwtDecode } from 'jwt-decode';
-import Loading from '../app/component/Loading';
 
 export default function CartPage() {
     const router = useRouter();
@@ -254,7 +253,7 @@ export default function CartPage() {
     };
 
     if (isLoading) {
-        return <Loading/>;
+        return <div className="p-6">Loading...</div>;
     }
 
     return (
