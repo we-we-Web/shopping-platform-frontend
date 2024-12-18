@@ -35,6 +35,7 @@ export default function ProductContent({ product }: { product: Product }) {
     const [isLoginOpen, setLoginOpen] = useState(false);
     const [addingBtnText, setAddingBtnText] = useState('Add to Cart');
     const [showPopup, setShowPopup] = useState(false);
+    const [selectedSize, setSelectedSize] = useState(null);
 
     useEffect(() => {
         document.body.style.overflow = isLoginOpen ? 'hidden' : 'auto';
@@ -67,6 +68,7 @@ export default function ProductContent({ product }: { product: Product }) {
         const request = {
             id: id,
             product: `${product?.id}`,
+            size: product.size,
             delta: productNum,
             remaining: product?.remain_amount,
         }
@@ -124,7 +126,7 @@ export default function ProductContent({ product }: { product: Product }) {
         );
     };
     const add = () => {
-        if(productNum < product.remain_amount){
+        if(productNum < selectedSize?.quantity){
             setProductNum(productNum+1);
         }
         else if(productNum === product.remain_amount){
@@ -159,7 +161,22 @@ export default function ProductContent({ product }: { product: Product }) {
                     </div>
                     <div>{product.description}</div>
                     <div className="flex flex-col mt-16">
-                        <div className="mb-2">剩餘數量：{product.remain_amount}</div>
+                        <div className="flex flex-col">
+                            <div className="flex gap-1">
+                                {Object.entries(product.size).map(([key, value]) =>(
+                                    <button key={key} onClick={()=>setSelectedSize({size:key, quantity:value})} className="flex items-center justify-center w-8 h-8 
+                                    bg-gray-100 hover:bg-gray-400 text-[1em] rounded-xl">
+                                        {key}
+                                    </button>
+                                ))}
+                            </div>
+                            
+                            {selectedSize && (
+                                <div className="mt-2 mb-2 ml-2">
+                                    {selectedSize.size}剩餘數量:{selectedSize.quantity}
+                                </div>
+                            )}
+                        </div>
                         <div className="flex items-center justify-center w-36 m-0">
                             <button onClick={minus} className="flex items-center justify-center w-8 h-8 
                                                             bg-gray-200 hover:bg-gray-400 text-[2em]">
