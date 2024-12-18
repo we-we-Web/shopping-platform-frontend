@@ -31,7 +31,7 @@ export const getServerSideProps: GetServerSideProps = async(context) => {
 
 export default function ProductContent({ product }: { product: Product }) {
     const [email, setEmail] = useState('');
-    const [productNum, setProductNum] = useState(1);
+    const [sizeQuantity, setSizeQuantity] = useState({ size: "", quantity: 0 });
     const [isLoginOpen, setLoginOpen] = useState(false);
     const [addingBtnText, setAddingBtnText] = useState('Add to Cart');
     const [showPopup, setShowPopup] = useState(false);
@@ -68,8 +68,8 @@ export default function ProductContent({ product }: { product: Product }) {
         const request = {
             id: id,
             product: `${product?.id}`,
-            size: product.size,
-            delta: productNum,
+            size: sizeQuantity.size,
+            delta: sizeQuantity.quantity,
             remaining: product?.remain_amount,
         }
         console.log('request body:', request);
@@ -126,18 +126,37 @@ export default function ProductContent({ product }: { product: Product }) {
         );
     };
     const add = () => {
-        if(productNum < selectedSize?.quantity){
-            setProductNum(productNum+1);
+        if(sizeQuantity.quantity < selectedSize?.quantity){
+            setSizeQuantity((prev)=>({
+                ...prev,
+                quantity: Math.min(prev.quantity + 1, selectedSize?.quantity || prev.quantity),
+            }));
         }
-        else if(productNum === product.remain_amount){
-            setProductNum(productNum);
+        else if(sizeQuantity.quantity === selectedSize?.quantity){
+            setSizeQuantity((prev)=>({
+                ...prev,
+                quantity: selectedSize?.quantity,
+            }));
             setShowPopup(true);
         }   
     }
     const minus = () => {
-        if(productNum <= 2) setProductNum(1);
-        else setProductNum(productNum-1);
+        if(sizeQuantity.quantity <= 2) setSizeQuantity((prev) => ({
+            ...prev,
+            quantity: 1,
+        }));
+        else {
+            setSizeQuantity((prev) => ({
+                ...prev,
+                quantity: Math.max(prev.quantity - 1, 1),
+            }));
+        }
     }
+
+    const handleSizeClick = (key, value) => {
+        setSelectedSize({ size: key, quantity: value });
+        setSizeQuantity({ size: key, quantity: 1 });
+      };
 
     if (!product) return <p>Loading...</p>;
     return (
@@ -164,7 +183,7 @@ export default function ProductContent({ product }: { product: Product }) {
                         <div className="flex flex-col">
                             <div className="flex gap-1">
                                 {Object.entries(product.size).map(([key, value]) =>(
-                                    <button key={key} onClick={()=>setSelectedSize({size:key, quantity:value})} className="flex items-center justify-center w-8 h-8 
+                                    <button key={key} onClick={()=>handleSizeClick(key, value)} className="flex items-center justify-center w-8 h-8 
                                     bg-gray-100 hover:bg-gray-400 text-[1em] rounded-xl">
                                         {key}
                                     </button>
@@ -182,7 +201,7 @@ export default function ProductContent({ product }: { product: Product }) {
                                                             bg-gray-200 hover:bg-gray-400 text-[2em]">
                                 -
                             </button>
-                            <span className="w-20 text-center">{productNum}</span>
+                            <span className="w-20 text-center">{sizeQuantity.quantity}</span>
                             <button onClick={add} className="flex items-center justify-center 
                                                             w-8 h-8 bg-gray-200 hover:bg-gray-400 text-[2em]">
                                 +
