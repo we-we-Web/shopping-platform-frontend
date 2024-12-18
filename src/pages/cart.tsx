@@ -159,7 +159,7 @@ export default function CartPage() {
             }
             else if(newCart[index].quantity === newCart[index].product.remain_amount){
                 setShowPopup(true);
-                delta = 0;
+                if(delta == 1) delta = 0;
             }
 
             updateRemoteQuantity(index, delta);
