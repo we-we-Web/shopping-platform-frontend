@@ -7,6 +7,7 @@ import '../../globals.css';
 export default function admin({ product }: { product: Product}) {
     const [onEdit, setOnEdit] = useState(false);
     const [newProduct, setNewProduct] = useState<Product>(product);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [size, setSize] = useState<{ [key: string]: number }>({});
     const sizeOrder = ['S', 'M', 'L', 'XL'];
     const edit = () => {
@@ -17,9 +18,11 @@ export default function admin({ product }: { product: Product}) {
         setOnEdit(!onEdit);
     }
 
-    const Delete = () => {
-        alert('Are you sure to delete this product?');
-    }
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files && event.target.files.length > 0) {
+            setSelectedFile(event.target.files[0]);
+        }
+    };
 
     const save = (type:string , value : string|number|{[key: string]: number}) => {
         if(!newProduct){
@@ -57,9 +60,17 @@ export default function admin({ product }: { product: Product}) {
         save('size', size);
         // console.log(size);
     }
+    let url = '', method = '';
+    if(product.id ==='-1'){
+        url = `https://dongyi-api.hnd1.zeabur.app/product/api/product/`;
+        method = 'POST';
+    }
+    else {
+        url = `https://dongyi-api.hnd1.zeabur.app/product/api/product/${product.id}`;
+        method = 'PATCH';
+    }
 
     const send = async() => {
-        const url = `https://dongyi-api.hnd1.zeabur.app/product/api/product/`;
         const request = {
             id: Number(newProduct.id),
             name: String(newProduct.name),
@@ -68,17 +79,49 @@ export default function admin({ product }: { product: Product}) {
             description: String(newProduct.description),
             categories: String(newProduct.categories),
             discount: Number(newProduct.discount),
-            image_url: "",
+            image_url: '',
         }
+        // const newImg = newProduct.image as unknown as File;
         console.log("request : ",request);
         try {
+            // const response = await fetch(url, {
+            //     method: method,
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //         // 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 OPR/114.0.0.0'
+            //     },
+            //     body: JSON.stringify(request),
+            // });
+            // if(response.ok){
+            //     const result = await response.json();
+            //     console.log(result);
+            //     return;
+            // }
+            // else{
+            //     console.log('failed to add product:', response.status);
+            // }
+        } catch (err) {
+            console.error('error:', err);
+        }
+        if(method === 'POST'){
+            const formData = new FormData();
+            if (selectedFile) {
+                formData.append('image', selectedFile);
+            }
+            console.log('formData:', formData);
+            await sendImg(formData, newProduct.id);
+        }
+    }
+    const sendImg = async(newImg:FormData,id:string) => {
+        url = `https://dongyi-api.hnd1.zeabur.app/api/product/upload_image?product_id=${id}`;
+        // const request = newImg;
+        try {
             const response = await fetch(url, {
-                method: 'POST',
+                method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
-                    // 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 OPR/114.0.0.0'
                 },
-                body: JSON.stringify(request),
+                body: newImg,
             });
             if(response.ok){
                 const result = await response.json();
@@ -93,10 +136,46 @@ export default function admin({ product }: { product: Product}) {
         }
     }
 
+    const Delete = async() => {
+        const confirmed = confirm('Are you sure to delete this product?');
+        if (confirmed) {
+            url = `https://dongyi-api.hnd1.zeabur.app/product/api/product/${product.id}`;
+            try{
+                const response = await fetch(url, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+
+                });
+                if(response.ok){
+                    const result = await response.json();
+                    console.log(result);
+                    console.log('Product deleted successfully');
+                    return;
+                }
+                else{
+                    console.log('failed to add product:', response.status);
+                }
+            }
+            catch(err){
+                console.error('error:', err);
+            }
+        } else {
+            console.log('Product deletion cancelled');
+        }
+    }
+
+
     return (
        <div className='flex m-8'>
-            <GrEdit />
-            {onEdit ? <input type='file' placeholder='new product Image' className='border border-gray-400' onChange={(e) => save('image', e.target.value)}></input>:
+            <button onClick={edit}><GrEdit /></button>
+            {onEdit ? <input 
+                        type='file' 
+                        placeholder='new product Image' 
+                        className='border border-gray-400' 
+                        onChange={handleFileChange}/>
+                        :
                 <Image 
                     src={newProduct.image ?? "/default.png"}
                     className='mr-[5vw] border-gray-400 border object-contain'
