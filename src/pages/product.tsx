@@ -35,7 +35,7 @@ export default function ProductContent({ product }: { product: Product }) {
     const [productNum, setProductNum] = useState(1);
     const [isLoginOpen, setLoginOpen] = useState(false);
     const [addingBtnText, setAddingBtnText] = useState('Add to Cart');
-
+   
     useEffect(() => {
         document.body.style.overflow = isLoginOpen ? 'hidden' : 'auto';
     }, [isLoginOpen]);
@@ -108,6 +108,8 @@ export default function ProductContent({ product }: { product: Product }) {
         if(productNum <= 2) setProductNum(1);
         else setProductNum(productNum-1);
     }
+    const sizeEntries = product.size ? Object.entries(product.size).filter(([key, value]) => Number(value) > 0) : [];
+    const [selectedSize, setSelectedSize] = useState<string | null>(null);
 
     if (!product) return <Loading/>;
     return (
@@ -115,22 +117,40 @@ export default function ProductContent({ product }: { product: Product }) {
             <NavigationBar />
             <div className='flex m-8'>
                 <ProductImage id={product.id} name={product.name} isIndex={false} />
-                <div className="flex-col pr-[10vw]">
-                    <h1 className="text-[4em] font-bold">{product.name}</h1>
-                    <div className="text-[3em] text-red-700 font-bold">
-                        {product.price} 
-                        <span className="text-[0.5em]">元</span> 
-                    </div>
-                    <div>{product.description}</div>
+                <div className="flex-col ml-10 space-y-6">
+                    <h1 className="text-2xl font-bold">{product.name}</h1>
+                    <p className="text-gray-600 text-sm">{product.description}</p>
+                    <div className="text-2xl font-bold text-red-600">NT${product.price}</div>
                     <div className="flex flex-col mt-16">
+                    <div>
+                            <h4>
+                                尺寸：{selectedSize ? <span>{selectedSize}</span> : '未選擇'}
+                            </h4>
+                            <div className="flex">
+                                {sizeEntries.length > 0 ? (
+                                    sizeEntries.map(([size, quantity]) => (
+                                        <button 
+                                            key={size} 
+                                            className={`w-10 h-10 border-2 rounded-lg flex items-center justify-center m-1 cursor-pointer
+                                                        ${selectedSize === size ? 'border-[#9F79EE] text-[#9F79EE]':'border-gray-400 text-gray-400 hover:border-[#9F79EE] hover:text-[#9F79EE]'}`}
+                                            onClick={() => setSelectedSize(size)}
+                                        >
+                                            {size}
+                                        </button>
+                                    ))
+                                ) : (
+                                    <span className="text-gray-500">目前無尺寸可選擇</span>
+                                )}
+                            </div>
+                    </div>
                         <div className="flex items-center justify-center w-36 m-0">
                             <button onClick={minus} className="flex items-center justify-center w-8 h-8 
-                                                            bg-gray-200 hover:bg-gray-400 text-[2em]">
+                                                             hover:text-[#9F79EE] text-[2em]">
                                 -
                             </button>
                             <span className="w-20 text-center">{productNum}</span>
                             <button onClick={add} className="flex items-center justify-center 
-                                                            w-8 h-8 bg-gray-200 hover:bg-gray-400 text-[2em]">
+                                                            w-8 h-8 hover:text-[#9F79EE] text-[2em]">
                                 +
                             </button>
                         </div>
