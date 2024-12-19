@@ -4,6 +4,9 @@ import Product from '../app/model/product';
 import NavigationBar from '../app/component/NavigationBar';
 import '../globals.css';
 import { useEffect, useState } from 'react';
+import { GrAdd } from "react-icons/gr";
+import Link from 'next/link'; 
+import Image from 'next/image';
 
 export const getServerSideProps: GetServerSideProps = async () => {
     console.log('hello world');
@@ -15,7 +18,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
         }
         const data: Product[] = await response.json();
         console.log('hello, ', data);
-        return { props: { data } };
+        return { props: { data} };
     } catch (err) {
         console.error("Error fetching data:", err);
         return { props: { data: [] } };
@@ -26,7 +29,6 @@ function Home({ data }: { data: Product[] }) {
     const [categories, setCategories] = useState<string[]>([]);
     const [selectedCategory, setSelectedCategory] = useState<string>('');
     const [filteredData, setFilteredData] = useState<Product[]>([]);
-
     useEffect(() => {
         setFilteredData(data);
         const uniqueCategories: string[] = Array.from(
@@ -53,7 +55,6 @@ function Home({ data }: { data: Product[] }) {
             <NavigationBar />
             <div className="p-6 relative mt-16">
                 <h1 className="text-2xl font-bold mb-6">商品列表</h1>
-
                 <div className="mb-4 flex items-center">
                     <label htmlFor="categorySelect" className="mr-2 font-semibold">選擇類別:</label>
                     <select
@@ -81,7 +82,13 @@ function Home({ data }: { data: Product[] }) {
                     {filteredData.map((product, index) => (
                         <ProductCard product={product} key={index} />
                     ))}
+                    <Link href={`/product/?id=new`}>
+                        <div className="flex flex-col shadow-lg rounded-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300 min-h-[300px] h-full cursor-pointer">
+                            <GrAdd className='text-8xl'/>
+                        </div>
+                    </Link>
                 </div>
+                
             </div>
         </>
     );

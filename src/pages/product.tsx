@@ -9,23 +9,39 @@ import { GetServerSideProps } from 'next';
 import { UserProfile } from '../app/model/userProfile';
 import { jwtDecode } from 'jwt-decode';
 import LoginPopup from '../app/component/LoginPopup';
+import Admin from '../app/component/admin';
 
 export const getServerSideProps: GetServerSideProps = async(context) => {
     const ProductId = context.query!;
-    try {
-        const url = `https://dongyi-api.hnd1.zeabur.app/product/api/product/${ProductId.id}`;
-        const response = await fetch(url);
-        if (response.ok) {
-            const product: Product = await response.json();
-            console.log(`Get product ${ProductId.id} successfully`);
-            return { props: { product } };
-        } else {
-            console.error('failed to fetch:', response.status);
+    if(ProductId.id == 'new') {
+        const product: Product = {
+            id: '-1',
+            name: '新商品',
+            price: 0,
+            description: '描述',
+            image: '/default.png',
+            remain_amount: 0,
+            color: 'black',
+            size: 'M',
+        };
+        return { props: {product} };
+    }
+    else{
+        try {
+            const url = `https://dongyi-api.hnd1.zeabur.app/product/api/product/${ProductId.id}`;
+            const response = await fetch(url);
+            if (response.ok) {
+                const product: Product = await response.json();
+                console.log(`Get product ${ProductId.id} successfully`);
+                return { props: { product } };
+            } else {
+                console.error('failed to fetch:', response.status);
+                return { props: {} };
+            }
+        } catch(err) {
+            console.error('error:', err);
             return { props: {} };
         }
-    } catch(err) {
-        console.error('error:', err);
-        return { props: {} };
     }
 }
 
@@ -34,6 +50,8 @@ export default function ProductContent({ product }: { product: Product }) {
     const [productNum, setProductNum] = useState(1);
     const [isLoginOpen, setLoginOpen] = useState(false);
     const [addingBtnText, setAddingBtnText] = useState('Add to Cart');
+    const [isAdmin, setIsAdmin] = useState(false);
+
 
     useEffect(() => {
         document.body.style.overflow = isLoginOpen ? 'hidden' : 'auto';
@@ -108,26 +126,35 @@ export default function ProductContent({ product }: { product: Product }) {
         else setProductNum(productNum-1);
     }
 
+    const admin = () => {
+        setIsAdmin(!isAdmin);
+    }
+
     if (!product) return <p>Loading...</p>;
     return (
         <div className="flex h-[100%] w-[100%] pt-[10vh]">
             <NavigationBar />
-            <div className='flex m-8'>
-                <Image 
-                    src={product.image ?? "/default.png"}
-                    className='mr-[5vw] border-gray-400 border object-contain'
-                    alt={product.name}
-                    width={800}
-                    height={800}
-                    priority={true}
-                />
+            <button onClick={admin}>admin</button>
+            {isAdmin ? <Admin product={product}/> : 
+                <div className='flex m-8'>
+                    <Image 
+                        src={product.image ?? "/default.png"}
+                        className='mr-[5vw] border-gray-400 border object-contain'
+                        alt={product.name}
+                        width={800}
+                        height={800}
+                        priority={true}
+                    />
                 <div className="flex-col pr-[10vw]">
                     <h1 className="text-[4em] font-bold">{product.name}</h1>
-                    <div className="text-[3em] text-red-700 font-bold">
-                        {product.price} 
-                        <span className="text-[0.5em]">元</span> 
+                        <div className="text-[3em] text-red-700 font-bold">
+                            {(product.price * (1 - (product.discount??1) / 100)).toFixed(2)}
+                            <span className="text-[0.5em]">元</span>
+                        </div> 
+                    
+                    <div className="flex items-center">
+                        {product.description}
                     </div>
-                    <div>{product.description}</div>
                     <div className="flex flex-col mt-16">
                         <div className="flex items-center justify-center w-36 m-0">
                             <button onClick={minus} className="flex items-center justify-center w-8 h-8 
@@ -148,6 +175,7 @@ export default function ProductContent({ product }: { product: Product }) {
                     </div>
                 </div>
             </div>
+            }
             {isLoginOpen &&
                 <LoginPopup
                     onClose={() => setLoginOpen(false)} 
