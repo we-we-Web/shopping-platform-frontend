@@ -35,7 +35,8 @@ export default function ProductContent({ product }: { product: Product }) {
     const [productNum, setProductNum] = useState(1);
     const [isLoginOpen, setLoginOpen] = useState(false);
     const [addingBtnText, setAddingBtnText] = useState('Add to Cart');
-   
+    const [selectedSize, setSelectedSize] = useState<string | null>(null);
+    const sizeOrder = ['S','M','L','XL'];
     useEffect(() => {
         document.body.style.overflow = isLoginOpen ? 'hidden' : 'auto';
     }, [isLoginOpen]);
@@ -67,8 +68,9 @@ export default function ProductContent({ product }: { product: Product }) {
         const request = {
             id: id,
             product: `${product?.id}`,
+            size: selectedSize,
             delta: productNum,
-            remaining: product?.remain_amount,
+            remaining: product.size[selectedSize!],
         }
         console.log('request body:', request);
         try {
@@ -108,9 +110,13 @@ export default function ProductContent({ product }: { product: Product }) {
         if(productNum <= 2) setProductNum(1);
         else setProductNum(productNum-1);
     }
-    const sizeEntries = product.size ? Object.entries(product.size).filter(([key, value]) => Number(value) > 0) : [];
-    const [selectedSize, setSelectedSize] = useState<string | null>(null);
-
+    // const sizeEntries = product.size ? Object.entries(product.size).filter(([key, value]) => Number(value) > 0) : [];
+    const sortDictionaryByKeys = (dict: { [key: string]: number }, order: string[]) => {
+        const sortedEntries = Object.entries(dict).sort((a, b) => order.indexOf(a[0]) - order.indexOf(b[0]));
+        return Object.fromEntries(sortedEntries);
+    };
+    const sortedSizes = sortDictionaryByKeys(product.size, sizeOrder);
+    console.log('product:', product.size);
     if (!product) return <Loading/>;
     return (
         <div className="flex h-[100%] w-[100%] pt-[10vh]">
@@ -127,8 +133,8 @@ export default function ProductContent({ product }: { product: Product }) {
                                 尺寸：{selectedSize ? <span>{selectedSize}</span> : '未選擇'}
                             </h4>
                             <div className="flex">
-                                {sizeEntries.length > 0 ? (
-                                    sizeEntries.map(([size, quantity]) => (
+                                {sortedSizes ? (
+                                    Object.entries(sortedSizes).map(([size, quantity]) => (
                                         <button 
                                             key={size} 
                                             className={`w-10 h-10 border-2 rounded-lg flex items-center justify-center m-1 cursor-pointer

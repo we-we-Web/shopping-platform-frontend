@@ -3,8 +3,8 @@ interface Product {
     name: string
     price: number
     color: string
-    size: string
-    remain_amount: number
+    size: { [key: string]: number }
+    // remain_amount: number
     image?: string
     description?: string
     discount?: number
